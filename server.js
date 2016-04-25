@@ -10,8 +10,8 @@ server.use(restify.queryParser());
 server.use(restify.bodyParser());
 server.use(restify.gzipResponse());
 
-server.get('/hello', function (req, res) {
-  res.send('hello World');
+server.get('/', function (req, res) {
+  res.send('Welcome');
 
 });
 
