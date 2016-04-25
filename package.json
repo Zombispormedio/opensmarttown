@@ -1,0 +1,30 @@
+{
+  "name": "open-api",
+  "version": "1.0.0",
+  "description": "Smart Town Open Api",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Zombispormedio/opensmarttown.git"
+  },
+  "keywords": [
+    "Open",
+    "api",
+    "data",
+    "restify",
+    "node",
+    "javascript"
+  ],
+  "author": "Xavier Serrano",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Zombispormedio/opensmarttown/issues"
+  },
+  "homepage": "https://github.com/Zombispormedio/opensmarttown#readme",
+  "dependencies": {
+    "restify": "^4.0.4"
+  }
+}
