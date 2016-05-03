@@ -6,7 +6,7 @@ var cors = require('koa-cors');
 var bodyParser = require('koa-bodyparser');
 var health = require('koa-ping');
 var morgan = require('koa-morgan');
-var errorHandler = require('koa-errorhandler')
+
 //var cache = require('koa-cache-lite');
 
 
@@ -33,8 +33,7 @@ module.exports = function (koa) {
         compress(),
         cors(),
         bodyParser(),
-        health(),
-        errorHandler()
+        health()
     ]);
 
 

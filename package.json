@@ -25,7 +25,9 @@
   },
   "homepage": "https://github.com/Zombispormedio/opensmarttown#readme",
   "dependencies": {
+    "async": "^2.0.0-rc.3",
     "boom": "^3.1.2",
+    "crypto": "0.0.3",
     "ioredis": "^1.15.1",
     "koa": "^1.2.0",
     "koa-bodyparser": "^2.0.1",
@@ -38,8 +40,13 @@
     "koa-ping": "^0.1.0",
     "koa-router": "^5.4.0",
     "koa-use": "^1.0.1",
+    "lodash": "^4.11.2",
     "mongoose": "^4.4.14",
     "mongoose-troop": "0.0.8",
+    "mongoose-unique-validator": "^1.0.2",
+    "sendgrid": "^2.0.0",
+    "sprintf-js": "^1.0.3",
+    "thunkify": "^2.1.2",
     "winston": "^2.2.0"
   },
   "devDependencies": {
