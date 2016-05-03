@@ -1,12 +1,19 @@
-var koa=require('koa');
+var koa = require('koa');
 
-var port = process.env.PORT || 5090;
+var C = require("./config/main")
+var routes = require(C.routes + "main")
+var middleware = require(C.config+"middleware")
+
 var app = koa();
 
 
-app.use(function *() {
-    this.body='Hello World';
+
+middleware(app);
+
+routes(app);
+
+
+app.listen(C.port, function () {
+    console.log("Connected: " + C.port);
+    console.log("Init at: " + new Date());
 });
-
-
-app.listen(port);
