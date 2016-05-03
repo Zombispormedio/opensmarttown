@@ -7,12 +7,13 @@ var bodyParser = require('koa-bodyparser');
 var health = require('koa-ping');
 var morgan = require('koa-morgan');
 var errorHandler = require('koa-errorhandler')
-var cache = require('koa-cache-lite');
+//var cache = require('koa-cache-lite');
+
 
 module.exports = function (koa) {
     var app = use(koa);
 
-    cache.configure({
+   /* cache.configure({
         '/': 3000
     }, {
             external: {
@@ -21,13 +22,14 @@ module.exports = function (koa) {
                 port: C.redis_port
             },
             debug: true
-        })
+        })*/
 
 
     app.use([
         morgan.middleware("dev"),
         methodOverride(),
-        cache.middleware(),
+        //cache.middleware(),
+     
         compress(),
         cors(),
         bodyParser(),

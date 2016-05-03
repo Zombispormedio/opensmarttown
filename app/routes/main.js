@@ -5,9 +5,8 @@ var users = require(C.routes + "users_routes")
 module.exports = function (app) {
 
 
-    app
-        .use(users.routes())
-        .use(users.allowedMethods());
+    app.use(users.routes())
+       .use(users.allowedMethods());
 
 
 

@@ -6,7 +6,7 @@ var router = new Router({
 });
 
 router.get('/', function *() {
-     this.body = 'Hello World';
+     this.body = {message:'Hell World'};
 });
 
 module.exports=router;
