@@ -34,3 +34,5 @@ node_modules
 
 
 *.bat
+/typings.json
+/typings
