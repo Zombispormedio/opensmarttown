@@ -3,7 +3,6 @@ var _ = require("lodash");
 var $ = require('thunkify');
 var sprintf = require("sprintf-js").sprintf;
 var async=require("async");
-
 var C = require("../../config/main")
 
 var i18n = require(C.lib + "i18n")
@@ -18,24 +17,23 @@ Controller.signin = $(function (body, cb) {
 
     async.waterfall([
         function (next) {
-           
-            DeveloperModel.UpdateAccessToken(email, function(err, flags){
-                console.log(err, flags);
-                next(null, flags);
-            });
+            DeveloperModel.UpdateAccessToken(email, next);
         },
         function (flags, next) {
-            console.log(flags);
-            if (flags.update) return next(null, {
-                response: i18n.M.res_update_token,
-                message: i18n.M.msg_update_token,
-                access_token: flags.access_token
-            })
+        
+            if (flags.update){
+                var obj=Object.create(null);
+                obj.response=i18n.M.res_update_token,
+                obj.message= i18n.M.msg_update_token,
+                obj.access_token= flags.access_token
             
+                return next(null, obj)
+            } 
+           
 
             var user = new DeveloperModel({ email: email });
             user.generateAccessToken();
-
+            
             user.save(function (err, result) {
                 if (err) return cb(err);
 
