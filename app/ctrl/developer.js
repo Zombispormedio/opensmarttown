@@ -51,8 +51,8 @@ Controller.signin = $(function (body, cb) {
                 subject: i18n.M.msg_subject,
                 toname: i18n.M.toname,
                 fromname: i18n.M.fromname
-            }, function () {
-                
+            }, function (err) {
+                if(err)return next(err);
                 next(null, result.response);
             });
         }
