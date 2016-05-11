@@ -13,10 +13,9 @@ module.exports=function(Schema){
     
     Schema.statics={
         UpdateAccessToken:function(email, cb){
-             console.log("hello");
+        
             async.waterfall([
                 (function(next){
-                     console.log("hello");
                     this.checkEmail(email, next);
                 }).bind(this), 
                 function update(user, next){

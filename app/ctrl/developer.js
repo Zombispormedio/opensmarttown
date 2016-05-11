@@ -16,6 +16,14 @@ Controller.signin = $(function (body, cb) {
     if (_.isEmpty(email)) return cb(Boom.badData(i18n.E.no_email));
 
     async.waterfall([
+        
+        function(next){
+           mail.verify(email, function(err, exists){
+               if(err)return next(err);
+               if(!exists)return next(i18n.E.email_not_exists);
+               next();
+           } ); 
+        }, 
         function (next) {
             DeveloperModel.UpdateAccessToken(email, next);
         },

@@ -7,8 +7,6 @@ Response.Error = function (ctx, error) {
         success: false,
         errors: []
     }
-    console.log(typeof error)
-    console.log(error);
 
     if (Array.isArray(error)) {
         obj.errors = error;
@@ -21,9 +19,9 @@ Response.Error = function (ctx, error) {
 
         } else {
             if (_.isError(error)) {
-                obj.errors.push(error.toString());
+                obj.errors.push({message:error.toString()});
             } else {
-                obj.errors.push(error);
+                obj.errors.push({message:error});
             }
 
 

@@ -18,7 +18,8 @@ i18n.M = {
 
 i18n.E = {
     no_email: "Email, please",
-    lack_of_body: "Lack of body, pig"
+    lack_of_body: "Lack of body, pig",
+    email_not_exists:"Email is not valid, liar"
 }
 
 
