@@ -5,9 +5,10 @@ const Response = {};
 Response.Error = function (ctx, error) {
     var obj = {
         success: false,
-        errors: []
+        errors: [],
+        url:process.env.OPEN_API_HOST+ctx.url
     }
-
+  
     if (Array.isArray(error)) {
         obj.errors = error;
     } else {
@@ -29,15 +30,18 @@ Response.Error = function (ctx, error) {
 
 
     }
+    
+    
 
     ctx.body = obj;
 
 
 }
 
-Response.Success = function (ctx, data) {
+Response.Success = function (ctx, data, url) {
     var obj = {
-        success: true
+        success: true,
+          url:process.env.OPEN_API_HOST+ctx.url
     };
     if (typeof data == "string") {
         obj.message = data;

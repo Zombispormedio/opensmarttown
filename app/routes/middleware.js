@@ -31,6 +31,7 @@ Middleware.Wrapper = function (fn) {
 Middleware.Error = function () {
 
     return function* (next) {
+     
         try {
             yield next;
         } catch (err) {

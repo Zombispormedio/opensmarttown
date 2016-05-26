@@ -13,7 +13,10 @@ var Controller = {};
 
 Controller.signin = $(function (body, cb) {
     var email = body.email;
-    if (_.isEmpty(email)) return cb(Boom.badData(i18n.E.no_email));
+    if (_.isEmpty(email)){
+        
+        return cb(Boom.badData(i18n.E.no_email));
+    } 
 
     async.waterfall([
         

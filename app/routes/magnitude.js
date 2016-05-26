@@ -10,28 +10,22 @@ var DeveloperCtrl = require(C.ctrl + "developer")
 
 var middleware = require(C.routes + "middleware")
 
-const PREFIX='/users';
+const PREFIX='/magnitudes';
 
 
 var router = new Router({
   prefix: PREFIX
 });
 
+router.use(middleware.Developer());
 
 router.get('/', function* () {
   Response.Success(this, i18n.M.welcome_users);
 });
 
-router.post('/', middleware.Body(), function* () {
-  var result = yield DeveloperCtrl.signin(this.request.body);
-  Response.Success(this, result);
-});
+
 
 
 
 
 module.exports = router;
-
-
-
-
