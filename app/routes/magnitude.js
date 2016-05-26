@@ -6,7 +6,7 @@ var Response = require(C.lib + "response")
 var i18n = require(C.lib + "i18n")
 var log = require(C.lib + "logger")
 
-var DeveloperCtrl = require(C.ctrl + "developer")
+var MagnitudeCtrl = require(C.ctrl + "magnitude")
 
 var middleware = require(C.routes + "middleware")
 
@@ -20,7 +20,8 @@ var router = new Router({
 router.use(middleware.Developer());
 
 router.get('/', function* () {
-  Response.Success(this, i18n.M.welcome_users);
+  var result = yield MagnitudeCtrl.Get(this.query);
+  Response.Success(this, result);
 });
 
 
