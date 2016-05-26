@@ -72,4 +72,13 @@ Controller.signin = $(function (body, cb) {
 
 });
 
+
+Controller.checkApiKey=$(function(api_key, cb){
+    DeveloperModel.findOne({"access_token":api_key}, function(err, result){
+       if(err)return cb(err);
+       if(!result)return cb(Boom.badData(i18n.E.api_key_not_valid));
+       cb(null, true)
+    });
+});
+
 module.exports = Controller;
