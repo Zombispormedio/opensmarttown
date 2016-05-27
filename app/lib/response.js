@@ -15,7 +15,6 @@ Response.Error = function (ctx, error) {
         if (error.isBoom) {
             var out = error.output;
             obj.errors.push(out.payload);
-
             ctx.status = out.statusCode;
 
         } else {
@@ -24,21 +23,13 @@ Response.Error = function (ctx, error) {
             } else {
                 obj.errors.push({message:error});
             }
-
-
         }
-
-
     }
-    
-    
-
+   
     ctx.body = obj;
-
-
 }
 
-Response.Success = function (ctx, data, url) {
+Response.Success = function (ctx, data) {
     var obj = {
         success: true,
           url:process.env.OPEN_API_HOST+ctx.url
@@ -49,6 +40,23 @@ Response.Success = function (ctx, data, url) {
         obj.result = data;
     }
 
+    ctx.body = obj;
+}
+
+Response.SuccessGeoJSON = function (ctx, data) {
+    var obj = {
+      "type": "FeatureCollection",
+      success:true,
+       url:process.env.OPEN_API_HOST+ctx.url
+    };
+    
+    if(Array.isArray(data)){
+        obj.features=data;
+    }else{
+        obj.features=[data];
+    }
+    
+    
     ctx.body = obj;
 }
 

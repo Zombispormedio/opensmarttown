@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+
+    <Document>
+
+        <name>Zones.kml</name>
+
+        {{#each this}}
+
+        <Placemark id="{{ref}}">
+            <name>{{display_name}}</name>
+
+
+            <ExtendedData>
+                {{#if keywords}}
+                <Data name="keywords">
+                    <value>{{keywords}}</value>
+                </Data> {{/if}}
+                <Data name="type">
+                    <value>{{shape.type}}</value>
+                </Data> {{#eq shape.type "circle"}}
+                <Data name="radius">
+                    <value>{{shape.radius}}</value>
+                </Data> {{/eq}}
+            </ExtendedData>
+
+
+
+            <LookAt>
+                <longitude>
+                    {{first lookAt}}
+                </longitude>
+                <latitude>
+                    {{last lookAt}}
+                </latitude>
+            </LookAt>
+
+            {{#eq shape.type "polygon"}}
+            <Polygon>
+                <outerBoundaryIs>
+                    <LinearRing>
+                        {{#each shape.paths}} {{this}} {{/each}}
+                    </LinearRing>
+                </outerBoundaryIs>
+            </Polygon>
+
+            {{/eq}} {{#eq shape.type "rectangle"}}
+            <Polygon>
+                <outerBoundaryIs>
+                    <LinearRing>
+                        {{#each shape.bounds}} {{this}} {{/each}}
+                    </LinearRing>
+                </outerBoundaryIs>
+            </Polygon>
+
+            {{/eq}} {{#eq shape.type "circle"}}
+            <Point>
+                <coordinates>{{shape.center}}</coordinates>
+            </Point>
+
+            {{/eq}}
+
+        </Placemark>
+
+
+        {{/each}}
+
+    </Document>
+
+</kml>

@@ -36,6 +36,7 @@ var config = Object.create(Config.prototype, {
     temp:secure_special_path("temp/"),
     test:secure_path("test/"),
     ctrl:secure_path("app/ctrl/"),
+    templates:secure_path("app/templates/"),
     secret:secure(process.env.SMARTDBSECRET),
     lang:secure("ES"),
     pagination:secure(5),

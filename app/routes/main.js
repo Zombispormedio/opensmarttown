@@ -6,6 +6,7 @@ var middleware = require(C.routes + "middleware")
 var developer = require(C.routes + "developer")
 var catalog = require(C.routes + "catalog")
 var magnitude = require(C.routes + "magnitude")
+var zone = require(C.routes + "zone")
 
 module.exports = function (app) {
 
@@ -20,6 +21,9 @@ module.exports = function (app) {
 
     app.use(magnitude.routes())
         .use(magnitude.allowedMethods());
+        
+    app.use(zone.routes())
+        .use(zone.allowedMethods());
 
     app.use(middleware.NoRoute());
 

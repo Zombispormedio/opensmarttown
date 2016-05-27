@@ -1,5 +1,5 @@
 var Router = require('koa-router');
-var Boom = require("boom");
+
 
 var C = require("../../config/main")
 var Response = require(C.lib + "response")
