@@ -42,7 +42,7 @@
     "koa-router": "^5.4.0",
     "koa-use": "^1.0.1",
     "lodash": "^4.11.2",
-    "mongoose": "^4.4.14",
+    "mongoose": "^4.4.19",
     "mongoose-troop": "0.0.8",
     "mongoose-unique-validator": "^1.0.2",
     "sendgrid": "^2.0.0",

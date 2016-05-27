@@ -11,8 +11,13 @@ i18n.M = {
     msg_subject: "Smart Town Love Message",
     toname:"Someone Special", 
     fromname:"Smart Town Dev Team",
+    
 
+}
 
+i18n.C={
+    ANALOG:"ANALOG",
+    DIGITAL:"DIGITAL"
 }
 
 
