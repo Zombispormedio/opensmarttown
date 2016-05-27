@@ -34,7 +34,7 @@ Controller.GeoJSON = $(function (params, cb) {
         if(err)return cb(err);
         
         result=result.map(function(item){
-            if(item.geometry==="Polygon"){
+            if(item.geometry.type==="Polygon"){
                 item.geometry.coordinates=[item.geometry.coordinates]
             }
            
