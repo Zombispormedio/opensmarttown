@@ -26,14 +26,14 @@
 
 
 
-            <LookAt>
+            <!--<LookAt>
                 <longitude>
                     {{first lookAt}}
                 </longitude>
                 <latitude>
                     {{last lookAt}}
                 </latitude>
-            </LookAt>
+            </LookAt>-->
 
             {{#eq shape.type "polygon"}}
             <Polygon>
