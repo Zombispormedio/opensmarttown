@@ -30,7 +30,18 @@ Controller.GeoJSON = $(function (params, cb) {
     
     mongo.paginateAggregation(pipeline, params.page);
     
-    ZoneModel.aggregate(pipeline).exec(cb);
+    ZoneModel.aggregate(pipeline).exec(function(err, result){
+        if(err)return cb(err);
+        
+        result=result.map(function(item){
+            if(item.geometry==="Polygon"){
+                item.geometry.coordinates=[item.geometry.coordinates]
+            }
+           
+            return item;
+        });
+        cb(void 0, result);
+    });
 });
 
 const KML_TEMPLATE=C.templates+"zone.handlevars.kml"
