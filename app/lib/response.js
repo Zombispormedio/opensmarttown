@@ -60,5 +60,11 @@ Response.SuccessGeoJSON = function (ctx, data) {
     ctx.body = obj;
 }
 
+Response.SuccessXML = function (ctx, data) {
+   ctx.response.set("Content-Type", "text/xml");
+   ctx.body=data;
+}
+
+
 
 module.exports = Response;
