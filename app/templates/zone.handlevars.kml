@@ -26,46 +26,58 @@
 
 
 
-            <!--<LookAt>
+            <LookAt>
                 <longitude>
                     {{first lookAt}}
                 </longitude>
                 <latitude>
                     {{last lookAt}}
                 </latitude>
-            </LookAt>-->
+            </LookAt>
 
             {{#eq shape.type "polygon"}}
             <Polygon>
-             <extrude>1</extrude>
-            <altitudeMode>relativeToGround</altitudeMode>
+                <extrude>1</extrude>
+                <altitudeMode>relativeToGround</altitudeMode>
                 <outerBoundaryIs>
                     <LinearRing>
-                     <coordinates>
-                        {{#each shape.paths}} 
-                        {{this}}
-                        {{/each}}
+                        <coordinates>
+                            {{#each shape.paths}} 
+                            {{this}} 
+                            {{/each}}
                         </coordinates>
                     </LinearRing>
                 </outerBoundaryIs>
             </Polygon>
 
-            {{/eq}} {{#eq shape.type "rectangle"}}
-            <Polygon>
-             <extrude>1</extrude>
-            <altitudeMode>relativeToGround</altitudeMode>
-                <outerBoundaryIs>
-                    <LinearRing>
-                     <coordinates>
-                        {{#each shape.bounds}} 
-                        {{this}}
-                        {{/each}}
-                        </coordinates>
-                    </LinearRing>
-                </outerBoundaryIs>
-            </Polygon>
+            {{/eq}} 
+            
+            {{#eq shape.type "rectangle"}}
+            <GroundOverlay>
+                <color>ffffffff</color>
+                <LatLonBox>
 
-            {{/eq}} {{#eq shape.type "circle"}}
+                    {{#each shape.bounds}} 
+                    
+                    {{#eq @index 0}}
+                    <north>{{first this}}</north>
+
+                    <south>{{last this}}</south>
+                    {{/eq}} 
+                    
+                    {{#eq @index 1}}
+                    <east>{{first this}}</east>
+
+                    <west>{{last this}}</west>
+                    {{/eq}} 
+                    {{/each}}
+
+                </LatLonBox>
+            </GroundOverlay>
+
+            {{/eq}} 
+            
+            {{#eq shape.type "circle"}}
             <Point>
                 <coordinates>{{shape.center}}</coordinates>
             </Point>
