@@ -37,6 +37,8 @@
 
             {{#eq shape.type "polygon"}}
             <Polygon>
+             <extrude>1</extrude>
+            <altitudeMode>relativeToGround</altitudeMode>
                 <outerBoundaryIs>
                     <LinearRing>
                      <coordinates>
@@ -50,6 +52,8 @@
 
             {{/eq}} {{#eq shape.type "rectangle"}}
             <Polygon>
+             <extrude>1</extrude>
+            <altitudeMode>relativeToGround</altitudeMode>
                 <outerBoundaryIs>
                     <LinearRing>
                      <coordinates>
