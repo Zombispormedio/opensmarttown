@@ -22,6 +22,7 @@ router.get('/', function* () {
     var format = this.query.format;
     switch (format) {
         case "kml":
+            this.response.set("Content-Type", "text/xml");
             this.body = yield ZoneCtrl.KML(this.query);
 
             break;
