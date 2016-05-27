@@ -39,7 +39,7 @@
             <Polygon>
                 <outerBoundaryIs>
                     <LinearRing>
-                        {{#each shape.paths}} {{this}} &#xD {{/each}}
+                        {{#each shape.paths}} {{this}} &#xD;{{/each}}
                     </LinearRing>
                 </outerBoundaryIs>
             </Polygon>
@@ -49,7 +49,7 @@
                 <outerBoundaryIs>
                     <LinearRing>
                     
-                        {{#each shape.bounds}} {{this}} &#xD {{/each}}
+                        {{#each shape.bounds}} {{this}} &#xD; {{/each}}
                     </LinearRing>
                 </outerBoundaryIs>
             </Polygon>
