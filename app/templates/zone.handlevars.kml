@@ -39,9 +39,11 @@
             <Polygon>
                 <outerBoundaryIs>
                     <LinearRing>
+                     <coordinates>
                         {{#each shape.paths}} 
                         {{this}}
                         {{/each}}
+                        </coordinates>
                     </LinearRing>
                 </outerBoundaryIs>
             </Polygon>
@@ -50,10 +52,11 @@
             <Polygon>
                 <outerBoundaryIs>
                     <LinearRing>
-                    
+                     <coordinates>
                         {{#each shape.bounds}} 
                         {{this}}
                         {{/each}}
+                        </coordinates>
                     </LinearRing>
                 </outerBoundaryIs>
             </Polygon>
