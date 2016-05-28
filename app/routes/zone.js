@@ -1,5 +1,5 @@
 var Router = require('koa-router');
-
+var _ = require("lodash")
 var C = require("../../config/main")
 var Response = require(C.lib + "response")
 var i18n = require(C.lib + "i18n")
@@ -19,23 +19,29 @@ var router = new Router({
 router.use(middleware.Developer());
 
 router.get('/', function* () {
-    var format = this.query.format;
-    switch (format) {
-        case "kml":
-            
-              var result = yield ZoneCtrl.KML(this.query);
-              Response.SuccessXML(this, result);
+    var query = _.cloneDeep(this.query);
+    var format = query.format;
 
-            break;
-        case "geojson":
-            var result = yield ZoneCtrl.GeoJSON(this.query);
-            Response.SuccessGeoJSON(this, result);
-            break;
-        default:
-            var result = yield ZoneCtrl.Default(this.query);
-            Response.Success(this, result);
-
+    if (query.near){
+        query.nearIDs=yield ZoneCtrl.NearIDs(query.near, query.max_distance);
     }
+    
+    
+        switch (format) {
+            case "kml":
+                var result = yield ZoneCtrl.KML(query);
+                Response.SuccessXML(this, result);
+
+                break;
+            case "geojson":
+                var result = yield ZoneCtrl.GeoJSON(query);
+                Response.SuccessGeoJSON(this, result);
+                break;
+            default:
+                var result = yield ZoneCtrl.Default(query);
+                Response.Success(this, result);
+
+        }
 
 
 });

@@ -28,6 +28,16 @@ Utils.generateToken=function(size){
   return Utils.randomString(size, 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789');
 
 };
+Utils.isNotEmpty=function(array){
+  var exists=false;
+  if(array){
+    if(array.length>0){
+      exists=true;
+    }
+  }
+  
+  return exists;
+}
 
 
 module.exports=Utils;

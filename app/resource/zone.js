@@ -1,4 +1,11 @@
 const SIZE = process.env.OPEN_API_PAGINATION;
+const GEO_UNIT=Number(process.env.GEO_UNIT);
+const MAX_DISTANCE=Number(process.env.OPEN_API_MAX_DISTANCE);
+var Immutable = require('immutable'); 
+
+var C = require("../../config/main");
+var utils = require(C.lib + "utils");
+
 
 module.exports = function (Schema) {
 
@@ -12,6 +19,8 @@ module.exports = function (Schema) {
             pre.keywords = 1
             pre.ref=1
             pre.lookAt = "$center";
+            pre.dist=1;
+            
             pre.shape={
                  $cond: {
                     if: { $eq: ["$shape.type", "rectangle"] }, then: {type:"$shape.type", bounds:"$shape.bounds"}, else: {
@@ -72,7 +81,33 @@ module.exports = function (Schema) {
 
             return project;
             
+        },
+        
+        near:function(coords, max){
+            var _max=(max||MAX_DISTANCE)/GEO_UNIT;
+            return {$near:coords, $maxDistance:_max}
+        },
+        
+        match:function(pipeline, params){
+            var q={};
+            
+            var set = Immutable.Set();
+           
+           if(utils.isNotEmpty(params.nearIDs)){
+             var near=params.nearIDs;
+             set=set.concat(near);
+           }
+            
+            if(set.count()>0){
+                q._id={$in:set.toArray()};
+            }
+            
+            console.log(q);
+            
+            
+            pipeline.push( {$match:q});
         }
+        
 
     };
 

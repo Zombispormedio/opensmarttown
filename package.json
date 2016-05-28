@@ -31,6 +31,7 @@
     "email-verify": "0.0.18",
     "handlebars": "^4.0.5",
     "handlebars-helpers": "^0.6.1",
+    "immutable": "^3.8.1",
     "ioredis": "^1.15.1",
     "koa": "^1.2.0",
     "koa-bodyparser": "^2.0.1",
