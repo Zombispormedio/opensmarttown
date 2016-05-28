@@ -1,7 +1,7 @@
 const SIZE = process.env.OPEN_API_PAGINATION;
-const GEO_UNIT=Number(process.env.GEO_UNIT);
-const MAX_DISTANCE=Number(process.env.OPEN_API_MAX_DISTANCE);
-var Immutable = require('immutable'); 
+const GEO_UNIT = Number(process.env.GEO_UNIT);
+const MAX_DISTANCE = Number(process.env.OPEN_API_MAX_DISTANCE);
+var Immutable = require('immutable');
 
 var C = require("../../config/main");
 var utils = require(C.lib + "utils");
@@ -17,16 +17,16 @@ module.exports = function (Schema) {
             pre._id = 0;
             pre.display_name = 1;
             pre.keywords = 1
-            pre.ref=1
+            pre.ref = 1
             pre.lookAt = "$center";
-            pre.dist=1;
-            
-            pre.shape={
-                 $cond: {
-                    if: { $eq: ["$shape.type", "rectangle"] }, then: {type:"$shape.type", bounds:"$shape.bounds"}, else: {
-                        $cond:{
-                            if:{$eq:["$shape.type","polygon"]}, then:{type:"$shape.type", paths:"$shape.paths"}, else:{
-                                type:"$shape.type", center:"$shape.center", radius:"$shape.radius"
+            pre.dist = 1;
+
+            pre.shape = {
+                $cond: {
+                    if: { $eq: ["$shape.type", "rectangle"] }, then: { type: "$shape.type", bounds: "$shape.bounds" }, else: {
+                        $cond: {
+                            if: { $eq: ["$shape.type", "polygon"] }, then: { type: "$shape.type", paths: "$shape.paths" }, else: {
+                                type: "$shape.type", center: "$shape.center", radius: "$shape.radius"
                             }
                         }
                     }
@@ -39,75 +39,76 @@ module.exports = function (Schema) {
             return project;
 
         },
-        GeoJSONFormat:function(){   
-            var pre={};
-            
-            pre.type={$literal:'Feature'};
-            pre._id=0;
-            pre.geometry={
-                 $cond: {
-                    if: { $eq: ["$shape.type", "rectangle"] }, 
-                    then: {type:{$literal:"Polygon"}, coordinates:"$shape.bounds"}, 
+        GeoJSONFormat: function () {
+            var pre = {};
+
+            pre.type = { $literal: 'Feature' };
+            pre._id = 0;
+            pre.geometry = {
+                $cond: {
+                    if: { $eq: ["$shape.type", "rectangle"] },
+                    then: { type: { $literal: "Polygon" }, coordinates: "$shape.bounds" },
                     else: {
-                        $cond:{
-                            if:{$eq:["$shape.type","polygon"]}, 
-                            then:{type:{$literal:"Polygon"}, coordinates:"$shape.paths"}, 
-                            else:{
-                                type:{$literal:"Point"}, coordinates:"$shape.center"
+                        $cond: {
+                            if: { $eq: ["$shape.type", "polygon"] },
+                            then: { type: { $literal: "Polygon" }, coordinates: "$shape.paths" },
+                            else: {
+                                type: { $literal: "Point" }, coordinates: "$shape.center"
                             }
                         }
                     }
                 }
             }
-            
-            pre.properties={
-                shape:{
+
+            pre.properties = {
+                shape: {
                     $cond: {
-                    if: { $eq: ["$shape.type", "circle"] }, 
-                    then: {type:"$shape.type", radius:"$shape.radius"}, 
-                    else: {
-                        type:"$shape.type"
+                        if: { $eq: ["$shape.type", "circle"] },
+                        then: { type: "$shape.type", radius: "$shape.radius" },
+                        else: {
+                            type: "$shape.type"
+                        }
                     }
-                }
                 },
-                display_name:"$display_name",
-                keywords:"$keywords",
-                ref:"$ref",
-                
-                global_center:{ type: {$literal:"Point"}, coordinates:"$center" }
+                display_name: "$display_name",
+                keywords: "$keywords",
+                ref: "$ref",
+
+                global_center: { type: { $literal: "Point" }, coordinates: "$center" }
             }
-            
+
             var project = { $project: pre };
 
             return project;
-            
+
         },
-        
-        near:function(coords, max){
-            var _max=(max||MAX_DISTANCE)/GEO_UNIT;
-            return {$near:coords, $maxDistance:_max}
+
+        near: function (coords, max) {
+            var _max = (max || MAX_DISTANCE) / GEO_UNIT;
+            return { $near: coords, $maxDistance: _max }
         },
-        
-        match:function(pipeline, params){
-            var q={};
-            
-            var set = Immutable.Set();
+
+        match: function (pipeline, params) {
+            var q = {};
            
-           if(utils.isNotEmpty(params.nearIDs)){
-             var near=params.nearIDs;
-             set=set.concat(near);
-           }
-            
-            if(set.count()>0){
-                q._id={$in:set.toArray()};
+            if (params.ref) {
+                q.ref = Number(params.ref);
+            } else {
+                var set = Immutable.Set();
+
+                if (utils.isNotEmpty(params.nearIDs)) {
+                    var near = params.nearIDs;
+                    set = set.concat(near);
+                }
+
+                if (set.count() > 0) {
+                    q._id = { $in: set.toArray() };
+                }
             }
-            
-            console.log(q);
-            
-            
-            pipeline.push( {$match:q});
+
+            pipeline.push({ $match: q });
         }
-        
+
 
     };
 

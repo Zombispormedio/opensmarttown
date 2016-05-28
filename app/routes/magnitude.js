@@ -10,7 +10,7 @@ var MagnitudeCtrl = require(C.ctrl + "magnitude")
 
 var middleware = require(C.routes + "middleware")
 
-const PREFIX='/magnitudes';
+const PREFIX = '/magnitudes';
 
 
 var router = new Router({
@@ -19,10 +19,15 @@ var router = new Router({
 
 router.use(middleware.Developer());
 
-router.get('/', function* () {
+var main = function* () {
+  this.query.ref = this.params.id;
   var result = yield MagnitudeCtrl.Get(this.query);
   Response.Success(this, result);
-});
+}
+
+router.get('/', main);
+
+router.get('/:id', main);
 
 
 

@@ -18,33 +18,39 @@ var router = new Router({
 
 router.use(middleware.Developer());
 
-router.get('/', function* () {
+var main = function* () {
     var query = _.cloneDeep(this.query);
     var format = query.format;
-
-    if (query.near){
-        query.nearIDs=yield ZoneCtrl.NearIDs(query.near, query.max_distance);
+    
+    query.ref = this.params.id;
+   
+    if (query.near) {
+        query.nearIDs = yield ZoneCtrl.NearIDs(query.near, query.max_distance);
     }
-    
-    
-        switch (format) {
-            case "kml":
-                var result = yield ZoneCtrl.KML(query);
-                Response.SuccessXML(this, result);
-
-                break;
-            case "geojson":
-                var result = yield ZoneCtrl.GeoJSON(query);
-                Response.SuccessGeoJSON(this, result);
-                break;
-            default:
-                var result = yield ZoneCtrl.Default(query);
-                Response.Success(this, result);
-
-        }
 
 
-});
+    switch (format) {
+        case "kml":
+            var result = yield ZoneCtrl.KML(query);
+            Response.SuccessXML(this, result);
+
+            break;
+        case "geojson":
+            var result = yield ZoneCtrl.GeoJSON(query);
+            Response.SuccessGeoJSON(this, result);
+            break;
+        default:
+            var result = yield ZoneCtrl.Default(query);
+            Response.Success(this, result);
+
+    }
+
+
+}
+
+
+router.get('/', main);
+router.get('/:id', main);
 
 
 
