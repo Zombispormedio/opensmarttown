@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+
+    <Document>
+
+        <name>SensorGrid.kml</name>
+
+        {{#each this}}
+
+        <Placemark id="{{ref}}">
+            <name>{{display_name}}</name>
+              <description>{{description}}</description>
+
+            <ExtendedData>
+             
+                <Data name="device_name">
+                    <value>{{device_name}}</value>
+                </Data> 
+                  <Data name="zone">
+                    <value>{{zone}}</value>
+                </Data> 
+                <Data name="sensors">
+                    <value>{{sensors}}</value>
+                </Data> 
+      
+            </ExtendedData>
+
+            <Point>
+                <coordinates>{{location}}</coordinates>
+            </Point>
+
+       
+
+        </Placemark>
+
+
+        {{/each}}
+
+    </Document>
+
+</kml>

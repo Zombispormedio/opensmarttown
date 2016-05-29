@@ -6,6 +6,7 @@ var C = require("../../config/main")
 
 var i18n = require(C.lib + "i18n")
 var mongo = require(C.lib + "mongoutils")
+var Handlebars = require(C.lib + "handlebars");
 
 var SensorGridModel = require(C.models + "sensor_grid")
 var SensorModel = require(C.models + "sensor")
@@ -72,12 +73,16 @@ var Format = function (format) {
         var result = grids;
         switch (format) {
             case "geojson": result = GeoJSON(grids);
+                cb(null, result);
                 break;
-            case "kml": result = KML(grids);
+            case "kml": result = KML(grids, cb);
                 break;
+
+            default:
+                cb(null, result);
         }
 
-        cb(null, result);
+
 
     }
 }
@@ -113,9 +118,11 @@ var GeoJSON = function (grids) {
     return result;
 }
 
-var KML = function (grids) {
+const KML_TEMPLATE = C.templates + "sensor_grid.handlevars.kml"
 
+var KML = function (grids, cb) {
 
+    Handlebars(KML_TEMPLATE, grids, cb);
 
 }
 
