@@ -15,13 +15,11 @@ var Controller = {};
 Controller.Default = $(function (params, cb) {
     var pipeline = [];
     ZoneModel.match(pipeline, params);
-
+    
+    mongo.paginateAggregation(pipeline, params.page);
     var project = ZoneModel.DefaultFormat();
     pipeline.push(project);
-
-    mongo.paginateAggregation(pipeline, params.page);
-
-
+    
     ZoneModel.aggregate(pipeline).exec(cb);
 });
 
@@ -29,11 +27,11 @@ Controller.Default = $(function (params, cb) {
 Controller.GeoJSON = $(function (params, cb) {
     var pipeline = [];
     ZoneModel.match(pipeline, params);
+    mongo.paginateAggregation(pipeline, params.page);
+    
     var project = ZoneModel.GeoJSONFormat();
     pipeline.push(project);
-
-    mongo.paginateAggregation(pipeline, params.page);
-
+    
     ZoneModel.aggregate(pipeline).exec(function (err, result) {
         if (err) return cb(err);
 
@@ -53,11 +51,11 @@ const KML_TEMPLATE = C.templates + "zone.handlevars.kml"
 Controller.KML = $(function (params, cb) {
     var pipeline = [];
     ZoneModel.match(pipeline, params);
+    mongo.paginateAggregation(pipeline, params.page);
+    
     var project = ZoneModel.DefaultFormat();
     pipeline.push(project);
-
-    mongo.paginateAggregation(pipeline, params.page);
-
+    
     ZoneModel.aggregate(pipeline).exec(function (err, zones) {
         if (err) return cb(err);
         Handlebars(KML_TEMPLATE, zones, cb);

@@ -7,6 +7,7 @@ var developer = require(C.routes + "developer")
 var catalog = require(C.routes + "catalog")
 var magnitude = require(C.routes + "magnitude")
 var zone = require(C.routes + "zone")
+var sensor_grid = require(C.routes + "sensor_grid")
 
 module.exports = function (app) {
 
@@ -21,9 +22,12 @@ module.exports = function (app) {
 
     app.use(magnitude.routes())
         .use(magnitude.allowedMethods());
-        
+
     app.use(zone.routes())
         .use(zone.allowedMethods());
+
+    app.use(sensor_grid.routes())
+        .use(sensor_grid.allowedMethods());
 
     app.use(middleware.NoRoute());
 

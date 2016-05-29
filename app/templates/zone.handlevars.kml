@@ -9,7 +9,7 @@
 
         <Placemark id="{{ref}}">
             <name>{{display_name}}</name>
-
+              <description>{{description}}</description>
 
             <ExtendedData>
                 {{#if keywords}}

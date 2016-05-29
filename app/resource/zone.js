@@ -18,6 +18,7 @@ module.exports = function (Schema) {
             pre.display_name = 1;
             pre.keywords = 1
             pre.ref = 1
+            pre.description=1;
             pre.lookAt = "$center";
             pre.dist = 1;
 
@@ -73,6 +74,7 @@ module.exports = function (Schema) {
                 display_name: "$display_name",
                 keywords: "$keywords",
                 ref: "$ref",
+                description:"$description",
 
                 global_center: { type: { $literal: "Point" }, coordinates: "$center" }
             }
@@ -107,6 +109,13 @@ module.exports = function (Schema) {
             }
 
             pipeline.push({ $match: q });
+        },
+        GetRef:function(id, cb){
+             this.findOne({_id:id}).select("ref").exec(function(err, result){
+               if(err)return cb(err);
+              
+               cb(null, result.ref);
+           });
         }
 
 
