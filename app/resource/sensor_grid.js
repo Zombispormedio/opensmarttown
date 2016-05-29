@@ -1,6 +1,10 @@
 const SIZE = process.env.OPEN_API_PAGINATION;
-var C = require("../../config/main")
+var Immutable = require('immutable');
 
+var C = require("../../config/main");
+var utils = require(C.lib + "utils");
+const GEO_UNIT = Number(process.env.GEO_UNIT);
+const MAX_DISTANCE = Number(process.env.OPEN_API_MAX_DISTANCE);
 
 module.exports = function (Schema) {
 
@@ -22,6 +26,47 @@ module.exports = function (Schema) {
 
             pipeline.push(project);
 
+        },
+         match: function (pipeline, params) {
+            var q = {};
+           
+            if (params.ref) {
+                q.ref = Number(params.ref);
+            } else {
+                var set = Immutable.Set();
+
+                if (utils.isNotEmpty(params.nearIDs)) {
+                    var near = params.nearIDs;
+                    set = set.concat(near);
+                }
+
+                if (set.count() > 0) {
+                    q._id = { $in: set.toArray() };
+                }
+                
+                
+                if(params.greater_num_sensor){
+                    var greater=params.greater_num_sensor;
+                    q["sensors."+(greater-1)]={$exists:true};
+                    
+                }
+                
+                if(params.less_num_sensor){
+                    var less=params.less_num_sensor;
+                     q["sensors."+less]={$exists:false};
+                }
+                
+                
+                
+                
+                
+            }
+
+            pipeline.push({ $match: q });
+        },
+         near: function (coords, max) {
+            var _max = (max || MAX_DISTANCE) / GEO_UNIT;
+            return { $near: coords, $maxDistance: _max }
         }
 
     }

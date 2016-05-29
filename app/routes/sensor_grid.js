@@ -25,6 +25,12 @@ var main = function* () {
 
     query.ref = this.params.id;
     
+     
+    if (query.near) {
+        query.nearIDs = yield SensorGridCtrl.NearIDs(query.near, query.max_distance);
+    }
+    
+    
     var result = yield SensorGridCtrl.Get(query);
    
 
