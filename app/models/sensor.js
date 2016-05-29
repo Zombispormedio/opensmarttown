@@ -11,7 +11,6 @@ var SensorSchema = new Schema({
     display_name: String,
     device_name: String,
     description: String,
-    location: [Number],
     magnitude: Schema.ObjectId,
     unit: Schema.ObjectId,
     sensor_grid: Schema.ObjectId

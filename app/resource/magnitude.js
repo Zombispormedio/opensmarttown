@@ -1,6 +1,6 @@
 const SIZE = process.env.OPEN_API_PAGINATION;
 var C = require("../../config/main")
-
+var _ = require("lodash")
 var i18n = require(C.lib + "i18n")
 module.exports = function (Schema) {
 
@@ -21,7 +21,7 @@ module.exports = function (Schema) {
                                 $map: {
                                     input: "$analog_units", as: "unit", in: { display_name: "$$unit.display_name", symbol: "$$unit.symbol" }
                                 }
-                            }, else: { on: "$digital_units.on", off: "$digital_units.on" }
+                            }, else: { on: "$digital_units.on", off: "$digital_units.off" }
                         }
                     },
                     conversions: 1,
@@ -42,6 +42,30 @@ module.exports = function (Schema) {
 
             pipeline.push({ $match: q });
 
+        },
+        RefAndUnit: function (magnitude, pre_unit, cb) {
+            this.findOne({ _id: magnitude }).select("display_name analog_units type digital_units").exec(function (err, result) {
+                if (err) return cb(err);
+                var unit=void 0;
+                result=result.toObject();
+                var magnitude = result.display_name;
+
+                if(result.type === "0"){
+                    
+                    var t=_.find(result.analog_units, function (o) { return o._id.equals(pre_unit) });
+                    if(t!= void 0){
+                        unit=_.omit(t, ["_id"]);
+                   
+                    }
+                    
+                }else{
+                    unit=_.omit(result.digital_units, ["_id"]);
+                }
+
+
+                 cb(null, magnitude, unit);
+
+            });
         }
 
     }

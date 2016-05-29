@@ -19,7 +19,20 @@ var router = new Router({
 router.use(middleware.Developer());
 
 var main = function* () {
+  var query = _.cloneDeep(this.query);
 
+    query.ref = this.params.id;
+    
+     if (query.magnitude) {
+        query.magnitudeIDs = yield SensorCtrl.MagnitudeIDs(query.magnitude);
+    }
+    
+    if (query.grid) {
+        
+        query.gridIDs = yield SensorCtrl.GridIDs(query.grid);
+     
+    }
+    
 
     var result = yield SensorCtrl.Get(query);
     Response.Success(this, result);

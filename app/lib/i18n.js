@@ -26,7 +26,9 @@ i18n.E = {
     lack_of_body: "Lack of body, pig",
     email_not_exists:"Email is not valid, liar",
     api_key:"API Key, please, in https://smart-town.herokuapp.com",
-    api_key_not_valid:"Not Valid Api Key"
+    api_key_not_valid:"Not Valid Api Key",
+      no_magnitude: "Magnitude doesn't exists",
+    
 }
 
 

@@ -67,6 +67,13 @@ module.exports = function (Schema) {
          near: function (coords, max) {
             var _max = (max || MAX_DISTANCE) / GEO_UNIT;
             return { $near: coords, $maxDistance: _max }
+        },
+         Ref:function(id, cb){
+             this.findOne({_id:id}).select("ref").exec(function(err, result){
+               if(err)return cb(err);
+              
+               cb(null, result.ref);
+           });
         }
 
     }

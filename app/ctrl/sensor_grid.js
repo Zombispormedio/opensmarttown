@@ -16,7 +16,7 @@ var Controller = {};
 
 Controller.Get = $(function (params, cb) {
     var pipeline = [];
-    SensorGridModel.match( pipeline, params);
+    SensorGridModel.match(pipeline, params);
     mongo.paginateAggregation(pipeline, params.page);
     SensorGridModel.DefaultFormat(pipeline);
 
@@ -126,8 +126,8 @@ var KML = function (grids, cb) {
 
 }
 
-Controller.NearIDs=$(function(c_str, max_str, cb){
-      var coords = c_str.split(",").map(function (a) { return Number(a); });
+Controller.NearIDs = $(function (c_str, max_str, cb) {
+    var coords = c_str.split(",").map(function (a) { return Number(a); });
     var max = Number(max_str);
     var q_near = SensorGridModel.near(coords, max);
 
