@@ -23,6 +23,8 @@ const Catalog = [
   "zones",
   "sensor_grids",
   "sensors",
+  "current",
+  "historical"
 
 ]
 
