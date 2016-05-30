@@ -9,6 +9,7 @@ var magnitude = require(C.routes + "magnitude")
 var zone = require(C.routes + "zone")
 var sensor_grid = require(C.routes + "sensor_grid")
 var sensor = require(C.routes + "sensor")
+var current = require(C.routes + "current")
 
 module.exports = function (app) {
 
@@ -32,6 +33,9 @@ module.exports = function (app) {
 
     app.use(sensor.routes())
         .use(sensor.allowedMethods());
+
+    app.use(current.routes())
+        .use(current.allowedMethods());
 
     app.use(middleware.NoRoute());
 

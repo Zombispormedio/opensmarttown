@@ -14,37 +14,37 @@ var MagnitudeModel = require(C.models + "magnitude");
 
 var Controller = {};
 
-Controller.Get = $(function (params, cb) {
- 
- var pipeline = [];
-    SensorModel.match( pipeline, params);
+Controller.GetSensor = function (params, cb) {
+    var pipeline = [];
+    SensorModel.match(pipeline, params);
     mongo.paginateAggregation(pipeline, params.page);
     SensorModel.DefaultFormat(pipeline);
-
-
     async.waterfall([
         function (next) {
             SensorModel.aggregate(pipeline).exec(next);
         },
         MagnitudeRef,
         GridRef
-      
-
 
     ], cb);
 
-});
+}
 
-var MagnitudeRef=function(sensors, cb){
-     async.map(sensors, function (item, next) {
+
+Controller.Get = $(Controller.GetSensor);
+
+
+
+var MagnitudeRef = function (sensors, cb) {
+    async.map(sensors, function (item, next) {
 
         MagnitudeModel.RefAndUnit(item.magnitude, item.unit, function (err, magnitude, unit) {
             if (err) return next(err);
 
             item.magnitude = magnitude;
-            
-            
-            item.unit=unit;
+
+
+            item.unit = unit;
             next(null, item);
         });
 
@@ -52,13 +52,13 @@ var MagnitudeRef=function(sensors, cb){
     }, cb);
 }
 
-var GridRef=function(sensors, cb){
-     async.map(sensors, function (item, next) {
+var GridRef = function (sensors, cb) {
+    async.map(sensors, function (item, next) {
 
-        SensorGridModel.Ref(item.grid,  function (err, ref) {
+        SensorGridModel.Ref(item.grid, function (err, ref) {
             if (err) return next(err);
 
-            item.grid=ref;
+            item.grid = ref;
             next(null, item);
         });
 
@@ -66,30 +66,30 @@ var GridRef=function(sensors, cb){
     }, cb);
 }
 
-Controller.MagnitudeIDs=$(function(ref, cb){
-    MagnitudeModel.findOne({ref:Number(ref)}, function(err, result){
-       if(err)return cb(err);
-       if(!result)return cb(i18n.E.no_magnitude);
-       
-       SensorModel.find({magnitude:result._id}).select("_id").exec(function(err, result){
-          if(err)return cb(err);
+Controller.MagnitudeIDs = $(function (ref, cb) {
+    MagnitudeModel.findOne({ ref: Number(ref) }, function (err, result) {
+        if (err) return cb(err);
+        if (!result) return cb(i18n.E.no_magnitude);
+
+        SensorModel.find({ magnitude: result._id }).select("_id").exec(function (err, result) {
+            if (err) return cb(err);
             var ids = result.map(function (item) {
                 return item._id;
             });
-            
+
             cb(null, ids);
-       });
-       
-        
+        });
+
+
     });
 });
 
-Controller.GridIDs=$(function(ref, cb){
-   SensorGridModel.findOne({ref:Number(ref)}, function(err, result){
-      if (err)return cb(err);
-   
-      cb(null, result.sensors);
-   });
+Controller.GridIDs = $(function (ref, cb) {
+    SensorGridModel.findOne({ ref: Number(ref) }, function (err, result) {
+        if (err) return cb(err);
+
+        cb(null, result.sensors);
+    });
 });
 
 

@@ -8,6 +8,7 @@ var SensorResource = require(C.resource + "sensor")
 var SensorSchema = new Schema({
 
     ref: Number,
+    node_id:String,
     display_name: String,
     device_name: String,
     description: String,
