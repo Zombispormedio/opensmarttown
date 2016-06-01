@@ -10,6 +10,8 @@ var Handlebars = require(C.lib + "handlebars");
 
 var SensorGridModel = require(C.models + "sensor_grid")
 var SensorModel = require(C.models + "sensor")
+
+var ZoneCtrl = require(C.ctrl + "zone")
 var ZoneModel = require(C.models + "zone")
 
 var Controller = {};
@@ -18,6 +20,28 @@ var Controller = {};
 Controller.GetGrid = function (params, cb) {
     var pipeline = [];
     SensorGridModel.match(pipeline, params);
+
+    GetSensorGrid(pipeline, params, cb);
+
+};
+
+
+Controller.Get = $(Controller.GetGrid);
+
+
+Controller.ByID = function (params, cb) {
+    var pipeline = [];
+    var match = { $match: { _id: params.id } };
+    pipeline.push(match);
+
+    params = _.omit(params, ["id"]);
+
+    GetSensorGrid(pipeline, params, cb);
+
+};
+
+
+var GetSensorGrid = function (pipeline, params, cb) {
     mongo.paginateAggregation(pipeline, params.page);
     SensorGridModel.DefaultFormat(pipeline, params);
 
@@ -27,20 +51,16 @@ Controller.GetGrid = function (params, cb) {
         }
     ];
 
-    if (params.no_sensors!=="false") {
+    if (params.no_sensors !== "false") {
         exec_pipeline.push(SensorRefs);
     }
-    exec_pipeline.push(ZoneRef);
+    exec_pipeline.push(ZoneRef(params));
 
     exec_pipeline.push(Format(params.format));
 
     async.waterfall(exec_pipeline, cb);
+}
 
-
-
-};
-
-Controller.Get = $(Controller.GetGrid);
 
 
 var SensorRefs = function (grids, cb) {
@@ -60,19 +80,33 @@ var SensorRefs = function (grids, cb) {
 
 }
 
-var ZoneRef = function (grids, cb) {
-    async.map(grids, function (item, next) {
+var ZoneRef = function (params) {
 
-        ZoneModel.GetRef(item.zone, function (err, ref) {
-            if (err) return next(err);
+    return function (grids, cb) {
+        async.map(grids, function (item, next) {
 
-            item.zone = ref;
-            next(null, item);
-        });
-
-
-    }, cb);
+            if (params.onlyRefs === "false") {
+                var p = {
+                    id: item.zone,
+                    no_shape: params.no_shape
+                }
+                ZoneCtrl.getZone(p, function (err, zone) {
+                    if (err) return next(err);
+                    item.zone = zone[0];
+                    next(null, item);
+                });
+            } else {
+                ZoneModel.GetRef(item.zone, function (err, ref) {
+                    if (err) return next(err);
+                    item.zone = ref;
+                    next(null, item);
+                });
+            }
+        }, cb);
+    }
 }
+
+
 
 var Format = function (format) {
     return function (grids, cb) {

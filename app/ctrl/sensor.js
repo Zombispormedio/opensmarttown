@@ -9,6 +9,8 @@ var mongo = require(C.lib + "mongoutils")
 
 
 var SensorGridModel = require(C.models + "sensor_grid")
+var SensorGridCtrl = require(C.ctrl + "sensor_grid")
+
 var SensorModel = require(C.models + "sensor");
 var MagnitudeModel = require(C.models + "magnitude");
 
@@ -60,13 +62,27 @@ var Magnitude = function (params) {
 var Grid = function (params) {
     return function (sensors, cb) {
         async.map(sensors, function (item, next) {
+            if (params.onlyRefs === "false") {
+                var p = {
+                    id:item.grid,
+                    onlyRefs: params.onlyRefs,
+                    no_sensors: "false"
+                }
 
-            SensorGridModel.Ref(item.grid, function (err, result) {
-                if (err) return next(err);
+                SensorGridCtrl.ByID(p, function (err, grids) {
+                    if (err) return next(err);
 
-                item.grid = result;
-                next(null, item);
-            });
+                    item.grid = grids[0];
+                    next(null, item);
+                });
+            } else {
+
+                SensorGridModel.Ref(item.grid, function (err, ref) {
+                    if (err) return next(err);
+                    item.grid = ref;
+                    next(null, item);
+                });
+            }
 
 
         }, cb);

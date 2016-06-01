@@ -11,28 +11,29 @@ module.exports = function (Schema) {
 
     Schema.statics = {
 
-        DefaultFormat: function () {
+        DefaultFormat: function (params) {
             var pre = {};
 
             pre._id = 0;
             pre.display_name = 1;
             pre.keywords = 1
             pre.ref = 1
-            pre.description=1;
+            pre.description = 1;
             pre.lookAt = "$center";
             pre.dist = 1;
 
-            pre.shape = {
-                $cond: {
-                    if: { $eq: ["$shape.type", "rectangle"] }, then: { type: "$shape.type", bounds: "$shape.bounds" }, else: {
-                        $cond: {
-                            if: { $eq: ["$shape.type", "polygon"] }, then: { type: "$shape.type", paths: "$shape.paths" }, else: {
-                                type: "$shape.type", center: "$shape.center", radius: "$shape.radius"
+            if (params.no_shape !== "false")
+                pre.shape = {
+                    $cond: {
+                        if: { $eq: ["$shape.type", "rectangle"] }, then: { type: "$shape.type", bounds: "$shape.bounds" }, else: {
+                            $cond: {
+                                if: { $eq: ["$shape.type", "polygon"] }, then: { type: "$shape.type", paths: "$shape.paths" }, else: {
+                                    type: "$shape.type", center: "$shape.center", radius: "$shape.radius"
+                                }
                             }
                         }
                     }
                 }
-            }
 
 
             var project = { $project: pre };
@@ -74,7 +75,7 @@ module.exports = function (Schema) {
                 display_name: "$display_name",
                 keywords: "$keywords",
                 ref: "$ref",
-                description:"$description",
+                description: "$description",
 
                 global_center: { type: { $literal: "Point" }, coordinates: "$center" }
             }
@@ -92,7 +93,7 @@ module.exports = function (Schema) {
 
         match: function (pipeline, params) {
             var q = {};
-           
+
             if (params.ref) {
                 q.ref = Number(params.ref);
             } else {
@@ -110,12 +111,12 @@ module.exports = function (Schema) {
 
             pipeline.push({ $match: q });
         },
-        GetRef:function(id, cb){
-             this.findOne({_id:id}).select("ref").exec(function(err, result){
-               if(err)return cb(err);
-              
-               cb(null, result.ref);
-           });
+        GetRef: function (id, cb) {
+            this.findOne({ _id: id }).select("ref").exec(function (err, result) {
+                if (err) return cb(err);
+
+                cb(null, result.ref);
+            });
         }
 
 

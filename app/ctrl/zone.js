@@ -12,26 +12,41 @@ var ZoneModel = require(C.models + "zone")
 
 var Controller = {};
 
-Controller.Default = $(function (params, cb) {
+Controller.getZone = function (params, cb) {
     var pipeline = [];
     ZoneModel.match(pipeline, params);
-    
-    mongo.paginateAggregation(pipeline, params.page);
-    var project = ZoneModel.DefaultFormat();
-    pipeline.push(project);
-    
-    ZoneModel.aggregate(pipeline).exec(cb);
-});
+    ZoneByPipeline(pipeline, params, cb)
 
+};
+Controller.Default = $(Controller.getZone);
+
+Controller.ByID = function (params, cb) {
+    var pipeline = [];
+    var match = { $match: { _id: params.id } };
+    pipeline.push(match);
+
+    params = _.omit(params, ["id"]);
+
+    ZoneByPipeline(pipeline, params, cb)
+}
+
+
+var ZoneByPipeline = function (pipeline, params, cb) {
+    mongo.paginateAggregation(pipeline, params.page);
+    var project = ZoneModel.DefaultFormat(params);
+    pipeline.push(project);
+
+    ZoneModel.aggregate(pipeline).exec(cb);
+}
 
 Controller.GeoJSON = $(function (params, cb) {
     var pipeline = [];
     ZoneModel.match(pipeline, params);
     mongo.paginateAggregation(pipeline, params.page);
-    
+
     var project = ZoneModel.GeoJSONFormat();
     pipeline.push(project);
-    
+
     ZoneModel.aggregate(pipeline).exec(function (err, result) {
         if (err) return cb(err);
 
@@ -52,10 +67,10 @@ Controller.KML = $(function (params, cb) {
     var pipeline = [];
     ZoneModel.match(pipeline, params);
     mongo.paginateAggregation(pipeline, params.page);
-    
+
     var project = ZoneModel.DefaultFormat();
     pipeline.push(project);
-    
+
     ZoneModel.aggregate(pipeline).exec(function (err, zones) {
         if (err) return cb(err);
         Handlebars(KML_TEMPLATE, zones, cb);
