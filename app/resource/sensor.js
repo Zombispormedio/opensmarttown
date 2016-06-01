@@ -45,23 +45,35 @@ module.exports = function (Schema) {
                 q.ref = Number(params.ref);
             } else {
                 var set = Immutable.Set();
+                 var grid_set=Immutable.Set();
 
                 if (utils.isNotEmpty(params.magnitudeIDs)) {
                     var magnitude = params.magnitudeIDs;
                     set = set.concat(magnitude);
                 }
 
-                if (utils.isNotEmpty(params.gridIDs)) {
-                    var grid = params.gridIDs;
-                    set = set.concat(grid);
+                if (utils.isNotEmpty(params.SensorIDsByGrid)) {
+                    var sensor_bygrid = params.SensorIDsByGrid;
+                    set = set.concat(sensor_bygrid);
                 }
 
 
                 if (set.count() > 0) {
                     q._id = { $in: set.toArray() };
                 }
+                
+                if(utils.isNotEmpty(params.nearGridIDs)){
+                   var nearGrids=params.nearGridIDs;
+                   grid_set=grid_set.concat(nearGrids);
+                }
+               
+                
+                 if (grid_set.count() > 0) {
+                    q.sensor_grid = { $in: grid_set.toArray() };
+                }
 
             }
+        
 
             pipeline.push({ $match: q });
         }

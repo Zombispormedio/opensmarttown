@@ -66,7 +66,8 @@ var Grid = function (params) {
                 var p = {
                     id:item.grid,
                     onlyRefs: params.onlyRefs,
-                    no_sensors: "false"
+                    no_sensors: "false",
+                    no_shape:params.no_shape
                 }
 
                 SensorGridCtrl.ByID(p, function (err, grids) {
@@ -110,7 +111,7 @@ Controller.MagnitudeIDs = $(function (ref, cb) {
     });
 });
 
-Controller.GridIDs = $(function (ref, cb) {
+Controller.SensorIDsByGrid = $(function (ref, cb) {
     SensorGridModel.findOne({ ref: Number(ref) }, function (err, result) {
         if (err) return cb(err);
 

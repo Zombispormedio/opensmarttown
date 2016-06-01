@@ -81,16 +81,17 @@ var SensorRefs = function (grids, cb) {
 }
 
 var ZoneRef = function (params) {
-
+    
     return function (grids, cb) {
+        
         async.map(grids, function (item, next) {
-
+           
             if (params.onlyRefs === "false") {
                 var p = {
                     id: item.zone,
                     no_shape: params.no_shape
                 }
-                ZoneCtrl.getZone(p, function (err, zone) {
+                ZoneCtrl.ByID(p, function (err, zone) {
                     if (err) return next(err);
                     item.zone = zone[0];
                     next(null, item);
