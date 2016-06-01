@@ -19,9 +19,12 @@
                   <Data name="zone">
                     <value>{{zone}}</value>
                 </Data> 
+                
+                {{#if sensors}}
                 <Data name="sensors">
                     <value>{{sensors}}</value>
                 </Data> 
+                {{/if}}
       
             </ExtendedData>
 

@@ -43,16 +43,17 @@ module.exports = function (Schema) {
             pipeline.push({ $match: q });
 
         },
-        RefAndUnit: function (magnitude, pre_unit, cb) {
-            this.findOne({ _id: magnitude }).select("display_name analog_units type digital_units").exec(function (err, result) {
+        ThisAndUnit: function (options, cb) {
+            this.findOne({ _id: options.magnitude }).select("display_name ref analog_units type digital_units").exec(function (err, result) {
                 if (err) return cb(err);
                 var unit=void 0;
                 result=result.toObject();
-                var magnitude = result.display_name;
+                
+                var magnitude = options.onlyRefs==="false"?result.display_name:result.ref;
 
                 if(result.type === "0"){
                     
-                    var t=_.find(result.analog_units, function (o) { return o._id.equals(pre_unit) });
+                    var t=_.find(result.analog_units, function (o) { return o._id.equals(options.unit) });
                     if(t!= void 0){
                         unit=_.omit(t, ["_id"]);
                    

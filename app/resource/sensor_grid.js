@@ -10,7 +10,7 @@ module.exports = function (Schema) {
 
     Schema.statics = {
 
-        DefaultFormat: function (pipeline) {
+        DefaultFormat: function (pipeline, params) {
             var pre = {};
 
             pre._id = 0;
@@ -19,7 +19,10 @@ module.exports = function (Schema) {
             pre.ref = 1
             pre.description = 1;
             pre.location = 1
-            pre.sensors = 1;
+
+            if (params.no_sensors !== "false")
+                pre.sensors = 1;
+
             pre.zone = 1;
 
             var project = { $project: pre };
@@ -27,9 +30,9 @@ module.exports = function (Schema) {
             pipeline.push(project);
 
         },
-         match: function (pipeline, params) {
+        match: function (pipeline, params) {
             var q = {};
-           
+
             if (params.ref) {
                 q.ref = Number(params.ref);
             } else {
@@ -43,37 +46,37 @@ module.exports = function (Schema) {
                 if (set.count() > 0) {
                     q._id = { $in: set.toArray() };
                 }
-                
-                
-                if(params.greater_num_sensor){
-                    var greater=params.greater_num_sensor;
-                    q["sensors."+(greater-1)]={$exists:true};
-                    
+
+
+                if (params.greater_num_sensor) {
+                    var greater = params.greater_num_sensor;
+                    q["sensors." + (greater - 1)] = { $exists: true };
+
                 }
-                
-                if(params.less_num_sensor){
-                    var less=params.less_num_sensor;
-                     q["sensors."+less]={$exists:false};
+
+                if (params.less_num_sensor) {
+                    var less = params.less_num_sensor;
+                    q["sensors." + less] = { $exists: false };
                 }
-                
-                
-                
-                
-                
+
+
+
+
+
             }
 
             pipeline.push({ $match: q });
         },
-         near: function (coords, max) {
+        near: function (coords, max) {
             var _max = (max || MAX_DISTANCE) / GEO_UNIT;
             return { $near: coords, $maxDistance: _max }
         },
-         Ref:function(id, cb){
-             this.findOne({_id:id}).select("ref").exec(function(err, result){
-               if(err)return cb(err);
-              
-               cb(null, result.ref);
-           });
+        Ref: function (id, cb) {
+            this.findOne({ _id: id }).select("ref").exec(function (err, result) {
+                if (err) return cb(err);
+
+                cb(null, result.ref);
+            });
         }
 
     }

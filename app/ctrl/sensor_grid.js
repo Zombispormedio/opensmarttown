@@ -14,27 +14,33 @@ var ZoneModel = require(C.models + "zone")
 
 var Controller = {};
 
-Controller.Get = $(function (params, cb) {
+
+Controller.GetGrid = function (params, cb) {
     var pipeline = [];
     SensorGridModel.match(pipeline, params);
     mongo.paginateAggregation(pipeline, params.page);
-    SensorGridModel.DefaultFormat(pipeline);
+    SensorGridModel.DefaultFormat(pipeline, params);
 
-
-    async.waterfall([
+    var exec_pipeline = [
         function (next) {
             SensorGridModel.aggregate(pipeline).exec(next);
-        },
-        SensorRefs,
-        ZoneRef,
-        Format(params.format)
+        }
+    ];
+
+    if (params.no_sensors!=="false") {
+        exec_pipeline.push(SensorRefs);
+    }
+    exec_pipeline.push(ZoneRef);
+
+    exec_pipeline.push(Format(params.format));
+
+    async.waterfall(exec_pipeline, cb);
 
 
-    ], cb);
 
+};
 
-
-});
+Controller.Get = $(Controller.GetGrid);
 
 
 var SensorRefs = function (grids, cb) {
@@ -105,7 +111,8 @@ var GeoJSON = function (grids) {
         p.description = item.description
 
         p.zone = item.zone
-        p.sensors = item.sensors
+        if (item.sensors)
+            p.sensors = item.sensors
 
 
         j.properties = p;

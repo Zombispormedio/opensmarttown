@@ -1,5 +1,5 @@
 var Router = require('koa-router');
-
+var _ = require("lodash")
 
 var C = require("../../config/main")
 var Response = require(C.lib + "response")
@@ -17,13 +17,16 @@ const router = new Router({
 
 router.use(middleware.Developer());
 
+var main=function* () {
+    var query = _.cloneDeep(this.query);
 
-router.get('/:sensor', function* () {
+    query.ref = this.params.sensor;
 
-   
-    var result = yield CurrentCtrl.GetSensorData(this.params.sensor);
+    var result = yield CurrentCtrl.GetSensorData(query);
     Response.Success(this, result);
-});
+}
+router.get('/', main);
+router.get('/:sensor', main);
 
 
 

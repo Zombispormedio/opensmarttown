@@ -18,13 +18,13 @@ Controller.GetSensor = function (params, cb) {
     var pipeline = [];
     SensorModel.match(pipeline, params);
     mongo.paginateAggregation(pipeline, params.page);
-    SensorModel.DefaultFormat(pipeline);
+    SensorModel.DefaultFormat(pipeline, params);
     async.waterfall([
         function (next) {
             SensorModel.aggregate(pipeline).exec(next);
         },
-        MagnitudeRef,
-        GridRef
+        Magnitude(params),
+        Grid(params)
 
     ], cb);
 
@@ -35,36 +35,46 @@ Controller.Get = $(Controller.GetSensor);
 
 
 
-var MagnitudeRef = function (sensors, cb) {
-    async.map(sensors, function (item, next) {
+var Magnitude = function (params) {
+    return function (sensors, cb) {
+        var only = params.onlyRefs;
+        async.map(sensors, function (item, next) {
+            var conf = { magnitude: item.magnitude, unit: item.unit, onlyRefs: only };
+            MagnitudeModel.ThisAndUnit(conf, function (err, magnitude, unit) {
+                if (err) return next(err);
 
-        MagnitudeModel.RefAndUnit(item.magnitude, item.unit, function (err, magnitude, unit) {
-            if (err) return next(err);
-
-            item.magnitude = magnitude;
-
-
-            item.unit = unit;
-            next(null, item);
-        });
+                item.magnitude = magnitude;
 
 
-    }, cb);
+                item.unit = unit;
+                next(null, item);
+            });
+
+
+        }, cb);
+    }
 }
 
-var GridRef = function (sensors, cb) {
-    async.map(sensors, function (item, next) {
-
-        SensorGridModel.Ref(item.grid, function (err, ref) {
-            if (err) return next(err);
-
-            item.grid = ref;
-            next(null, item);
-        });
 
 
-    }, cb);
+var Grid = function (params) {
+    return function (sensors, cb) {
+        async.map(sensors, function (item, next) {
+
+            SensorGridModel.Ref(item.grid, function (err, result) {
+                if (err) return next(err);
+
+                item.grid = result;
+                next(null, item);
+            });
+
+
+        }, cb);
+    }
 }
+
+
+
 
 Controller.MagnitudeIDs = $(function (ref, cb) {
     MagnitudeModel.findOne({ ref: Number(ref) }, function (err, result) {
