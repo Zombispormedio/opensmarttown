@@ -59,7 +59,7 @@ var CurrentData = function (node_id, cb) {
 var Format = function (params) {
 
     return function (cb) {
-        params.no_last_sync = "false";
+        params.no_last_sync = "true";
         SensorCtrl.GetSensor(params, cb);
     }
 

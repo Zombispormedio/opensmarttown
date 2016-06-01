@@ -14,7 +14,7 @@ module.exports = function (Schema) {
         DefaultFormat: function (params) {
             var pre = {};
 
-            pre._id = 0;
+           
             pre.display_name = 1;
             pre.keywords = 1
             pre.ref = 1
@@ -22,7 +22,7 @@ module.exports = function (Schema) {
             pre.lookAt = "$center";
             pre.dist = 1;
 
-            if (params.no_shape !== "false")
+            if (params.no_shape !== "true")
                 pre.shape = {
                     $cond: {
                         if: { $eq: ["$shape.type", "rectangle"] }, then: { type: "$shape.type", bounds: "$shape.bounds" }, else: {

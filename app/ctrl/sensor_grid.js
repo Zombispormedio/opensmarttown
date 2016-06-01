@@ -51,7 +51,7 @@ var GetSensorGrid = function (pipeline, params, cb) {
         }
     ];
 
-    if (params.no_sensors !== "false") {
+    if (params.no_sensors !== "true") {
         exec_pipeline.push(SensorRefs);
     }
     exec_pipeline.push(ZoneRef(params));
@@ -81,11 +81,11 @@ var SensorRefs = function (grids, cb) {
 }
 
 var ZoneRef = function (params) {
-    
+
     return function (grids, cb) {
-        
+
         async.map(grids, function (item, next) {
-           
+
             if (params.onlyRefs === "false") {
                 var p = {
                     id: item.zone,
@@ -184,6 +184,23 @@ Controller.NearIDs = $(function (c_str, max_str, cb) {
             cb(null, ids);
         });
 })
+
+Controller.GetCounts = function (params, cb) {
+   SensorGridModel.find(params, function(err, grids){
+      if(err)return cb(err);
+      var result={};
+      result.num_grids=grids.length;
+      
+      result.num_sensors=grids.reduce(function(acum, item ){
+          return acum+=item.sensors.length;
+      }, 0);
+      
+      cb(void 0, result);
+      
+       
+   });
+
+};
 
 
 module.exports = Controller;

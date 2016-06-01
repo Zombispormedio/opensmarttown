@@ -66,7 +66,7 @@ var Grid = function (params) {
                 var p = {
                     id:item.grid,
                     onlyRefs: params.onlyRefs,
-                    no_sensors: "false",
+                    no_sensors: "true",
                     no_shape:params.no_shape
                 }
 

@@ -15,13 +15,24 @@
                 {{#if keywords}}
                 <Data name="keywords">
                     <value>{{keywords}}</value>
-                </Data> {{/if}}
+                </Data> 
+                {{/if}}
                 <Data name="type">
                     <value>{{shape.type}}</value>
-                </Data> {{#eq shape.type "circle"}}
+                </Data> 
+                {{#eq shape.type "circle"}}
                 <Data name="radius">
                     <value>{{shape.radius}}</value>
-                </Data> {{/eq}}
+                </Data> 
+                {{/eq}}
+                
+                 <Data name="num_grids">
+                    <value>{{num_grids}}</value>
+                </Data> 
+                 <Data name="num_sensors">
+                    <value>{{num_sensors}}</value>
+                </Data> 
+                
             </ExtendedData>
 
 

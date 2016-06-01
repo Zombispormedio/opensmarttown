@@ -28,19 +28,18 @@ var main = function* () {
         query.nearIDs = yield ZoneCtrl.NearIDs(query.near, query.max_distance);
     }
 
+    var result = yield ZoneCtrl.Get(query);
 
     switch (format) {
         case "kml":
-            var result = yield ZoneCtrl.KML(query);
             Response.SuccessXML(this, result);
 
             break;
         case "geojson":
-            var result = yield ZoneCtrl.GeoJSON(query);
+         
             Response.SuccessGeoJSON(this, result);
             break;
         default:
-            var result = yield ZoneCtrl.Default(query);
             Response.Success(this, result);
 
     }

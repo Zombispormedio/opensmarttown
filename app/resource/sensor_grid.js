@@ -20,7 +20,7 @@ module.exports = function (Schema) {
             pre.description = 1;
             pre.location = 1
 
-            if (params.no_sensors !== "false")
+            if (params.no_sensors !== "true")
                 pre.sensors = 1;
 
             pre.zone = 1;

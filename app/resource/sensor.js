@@ -30,7 +30,7 @@ module.exports = function (Schema) {
             pre.unit = 1;
             pre.grid = "$sensor_grid";
 
-            if (params.no_last_sync!=="false")
+            if (params.no_last_sync!=="true")
                 pre.last_sync = 1;
 
             var project = { $project: pre };
