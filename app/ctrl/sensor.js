@@ -19,7 +19,7 @@ const Controller = {};
 
 
 Controller.GetSensor = function (params, cb) {
-   
+
     if (ParamsValidation(params)) {
         var exec_pipeline = GetSensorByPipeline(params);
         exec_pipeline.push(Omit);
@@ -146,7 +146,9 @@ Controller.MagnitudeIDs = $(function (ref, cb) {
     });
 });
 
-Controller.GridIDsByMagnitude = $(function (ref, cb) {
+
+
+var GridByMagnitude = function (ref, cb) {
     MagnitudeModel.findOne({ ref: Number(ref) }, function (err, result) {
         if (err) return cb(err);
         if (!result) return cb(i18n.E.no_magnitude);
@@ -167,17 +169,37 @@ Controller.GridIDsByMagnitude = $(function (ref, cb) {
 
         SensorModel.aggregate(pipeline).exec(function (err, r) {
             if (err) return cb(err);
-            if(r[0]){
-               cb(null, r[0].grids); 
-            }else{
+            if (r[0]) {
+                cb(null, r[0].grids);
+            } else {
                 cb(null, []);
             }
-            
+
         });
 
 
     });
+}
+
+Controller.GridIDsByMagnitude = $(GridByMagnitude);
+
+Controller.ZoneIDsByMagnitude = $(function (ref, cb) {
+    GridByMagnitude(ref, function (err, grids) {
+        if (err) return cb(err);
+
+
+        SensorGridModel.find({ _id: { $in: grids } }).select("zone").exec(function (err, result) {
+            if (err) return cb(err);
+            
+            cb(null, result.map(function(item){
+                return item.zone;
+            }));
+
+        });
+
+    });
 });
+
 
 Controller.SensorIDsByGrid = $(function (ref, cb) {
     SensorGridModel.findOne({ ref: Number(ref) }, function (err, result) {

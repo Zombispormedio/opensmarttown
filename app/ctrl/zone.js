@@ -210,7 +210,8 @@ var Omit = function (zones, cb) {
 var ParamsValidation = function (params) {
 
     var EmptyArrayIDs = [
-        params.nearIDs
+        params.nearIDs,
+        params.magnitudeIDs
     ].every(function (item) {
         var valid = true;
 

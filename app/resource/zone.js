@@ -103,6 +103,11 @@ module.exports = function (Schema) {
                     var near = params.nearIDs;
                     set = set.concat(near);
                 }
+                
+                if (utils.isNotEmptyAndNull(params.magnitudeIDs)) {
+                    var magnitude = params.magnitudeIDs;
+                    set = set.concat(magnitude);
+                }
 
                 if (set.count() > 0) {
                     q._id = { $in: set.toArray() };

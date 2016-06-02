@@ -6,6 +6,8 @@ var i18n = require(C.lib + "i18n")
 var log = require(C.lib + "logger")
 
 var ZoneCtrl = require(C.ctrl + "zone")
+var SensorCtrl = require(C.ctrl + "sensor")
+
 
 var middleware = require(C.routes + "middleware")
 
@@ -27,6 +29,10 @@ var main = function* () {
     if (query.near) {
         query.nearIDs = yield ZoneCtrl.NearIDs(query.near, query.max_distance);
     }
+    
+      if(query.magnitude){
+         query.magnitudeIDs=yield SensorCtrl.ZoneIDsByMagnitude(query.magnitude);
+     }
 
     var result = yield ZoneCtrl.Get(query);
 
