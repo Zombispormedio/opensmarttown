@@ -164,19 +164,29 @@ Controller.NearIDs = $(function (c_str, max_str, cb) {
 });
 
 var SensorCount = function (zones, cb) {
+    var params = {
+        zones: zones.map(function (a) {
+            return a._id;
+        })
+    }
 
-    async.map(zones, function (item, next) {
-        var params = {
-            zone: item._id
-        }
-        SensorGridCtrl.GetCounts(params, function (err, result) {
-            if (err) return next(err);
+    SensorGridCtrl.GetCountsByZone(params, function (err, result) {
+        if (err) return cb(err);
 
-            item = _.merge(item, result);
-
-            next(null, item);
+        result.forEach(function (item) {
+            var zone=_.find(zones, function(z){
+               return z._id.equals(item._id); 
+            });
+            
+            if(zone){
+                zone.num_sensors=item.num_sensors;
+                zone.num_grids=item.num_grids;
+            }
         });
-    }, cb);
+        
+        cb(null,zones);
+
+    });
 
 }
 

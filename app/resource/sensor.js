@@ -20,7 +20,7 @@ module.exports = function (Schema) {
         DefaultFormat: function (pipeline, params) {
             var pre = {};
 
-            pre._id = 0;
+           
             pre.display_name = 1;
             pre.device_name = 1;
             pre.ref = 1

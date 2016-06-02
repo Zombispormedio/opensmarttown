@@ -185,20 +185,40 @@ Controller.NearIDs = $(function (c_str, max_str, cb) {
         });
 })
 
-Controller.GetCounts = function (params, cb) {
-   SensorGridModel.find(params, function(err, grids){
-      if(err)return cb(err);
-      var result={};
-      result.num_grids=grids.length;
-      
-      result.num_sensors=grids.reduce(function(acum, item ){
-          return acum+=item.sensors.length;
-      }, 0);
-      
-      cb(void 0, result);
-      
-       
-   });
+Controller.GetCountsByZone = function (params, cb) {
+    var pipeline = [];
+    if (params) {
+        var match = {};
+        if (params.zones) {
+            if (params.zones.length > 0) {
+                match.zone = { $in: params.zones };
+            }
+        }
+
+        if (Object.keys(match) > 0) {
+            pipeline.push({ $match: match });
+        }
+    }
+
+    var group = {
+        $group: {
+            _id: "$zone",
+            num_sensors: { $sum: { $size: "$sensors" } },
+            grids: { $push: "$$ROOT" }
+        }
+    };
+    pipeline.push(group);
+
+    var project = {
+        $project: {
+            num_sensors: 1,
+            num_grids: { $size: "$grids" }
+        }
+    };
+    pipeline.push(project);
+
+
+    SensorGridModel.aggregate(pipeline).exec(cb);
 
 };
 

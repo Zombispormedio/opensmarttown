@@ -10,6 +10,7 @@ var mongo = require(C.lib + "mongoutils")
 
 var SensorGridModel = require(C.models + "sensor_grid")
 var SensorGridCtrl = require(C.ctrl + "sensor_grid")
+var SensorRegistryCtrl = require(C.ctrl + "sensor_registry")
 
 var SensorModel = require(C.models + "sensor");
 var MagnitudeModel = require(C.models + "magnitude");
@@ -21,14 +22,24 @@ Controller.GetSensor = function (params, cb) {
     SensorModel.match(pipeline, params);
     mongo.paginateAggregation(pipeline, params.page);
     SensorModel.DefaultFormat(pipeline, params);
-    async.waterfall([
+
+    var exec_pipeline = [
         function (next) {
             SensorModel.aggregate(pipeline).exec(next);
-        },
-        Magnitude(params),
-        Grid(params)
+        }
+    ];
 
-    ], cb);
+    exec_pipeline.push(Magnitude(params));
+
+    exec_pipeline.push(Grid(params));
+
+    if (params.stats === "true") {
+         exec_pipeline.push(Stats);
+    }
+
+    exec_pipeline.push(Omit);
+
+    async.waterfall(exec_pipeline, cb);
 
 }
 
@@ -64,10 +75,10 @@ var Grid = function (params) {
         async.map(sensors, function (item, next) {
             if (params.onlyRefs === "false") {
                 var p = {
-                    id:item.grid,
+                    id: item.grid,
                     onlyRefs: params.onlyRefs,
                     no_sensors: "true",
-                    no_shape:params.no_shape
+                    no_shape: params.no_shape
                 }
 
                 SensorGridCtrl.ByID(p, function (err, grids) {
@@ -118,6 +129,40 @@ Controller.SensorIDsByGrid = $(function (ref, cb) {
         cb(null, result.sensors);
     });
 });
+
+var Omit = function (sensors, cb) {
+
+    async.map(sensors, function (item, next) {
+        item = _.omit(item, ["_id"]);
+        next(null, item);
+    }, cb);
+
+}
+
+var Stats=function (sensors, cb) {
+
+     var params = {
+        sensors: sensors.map(function (a) {
+            return a._id;
+        })
+    }
+    
+    SensorRegistryCtrl.GetSensorStats(params, function(err, result){
+        result.forEach(function (item) {
+            var sensor=_.find(sensors, function(z){
+               return z._id.equals(item._id); 
+            });
+            
+            if(sensor){
+                sensor.stats=_.omit(item, ["_id"]);
+             
+            }
+        });
+        
+        cb(null,sensors);
+    });
+
+}
 
 
 
