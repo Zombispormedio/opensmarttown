@@ -28,7 +28,7 @@ Utils.generateToken=function(size){
   return Utils.randomString(size, 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789');
 
 };
-Utils.isNotEmpty=function(array){
+Utils.isNotEmptyAndNull=function(array){
   var exists=false;
   if(array){
     if(array.length>0){
@@ -39,5 +39,19 @@ Utils.isNotEmpty=function(array){
   return exists;
 }
 
+Utils.isEmpty=function(array){
+  var exists=false;
+  if(array){
+    if(array.length===0){
+      exists=true;
+    }
+  }
+  
+  return exists;
+}
+
+Utils.isValidDate=function(date){
+  return date.toString()!=="Invalid Date";
+}
 
 module.exports=Utils;

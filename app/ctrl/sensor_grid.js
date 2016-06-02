@@ -19,10 +19,16 @@ const Controller = {};
 
 
 Controller.GetGrid = function (params, cb) {
-    var pipeline = [];
-    SensorGridModel.match(pipeline, params);
 
-    GetSensorGrid(pipeline, params, cb);
+    if (ParamsValidation(params)) {
+        var pipeline = [];
+        SensorGridModel.match(pipeline, params);
+
+        GetSensorGrid(pipeline, params, cb);
+    } else {
+        cb(null, []);
+    }
+
 
 };
 
@@ -84,14 +90,14 @@ var SensorRefs = function (grids, cb) {
 var ZoneRef = function (params) {
 
     return function (grids, cb) {
-        
+
         async.map(grids, function (item, next) {
 
             if (params.onlyRefs === "false") {
                 var p = {
                     id: item.zone,
                     no_shape: params.no_shape,
-                    sensor_count:"false"
+                    sensor_count: "false"
                 }
                 ZoneCtrl.ByID(p, function (err, zone) {
                     if (err) return next(err);
@@ -186,6 +192,24 @@ Controller.NearIDs = $(function (c_str, max_str, cb) {
             cb(null, ids);
         });
 })
+
+var ParamsValidation = function (params) {
+
+    var EmptyArrayIDs = [
+        params.nearIDs,
+        params.magnitudeIDs
+    ].every(function (item) {
+        var valid = true;
+
+        if (item) {
+            valid = item.length > 0;
+        }
+
+        return valid;
+    });
+
+    return EmptyArrayIDs;
+}
 
 
 

@@ -6,6 +6,7 @@ var i18n = require(C.lib + "i18n")
 var log = require(C.lib + "logger")
 
 var SensorGridCtrl = require(C.ctrl + "sensor_grid")
+var SensorCtrl = require(C.ctrl + "sensor")
 
 var middleware = require(C.routes + "middleware")
 
@@ -25,6 +26,11 @@ var main = function* () {
 
     query.ref = this.params.id;
     
+     
+     if(query.magnitude){
+         query.magnitudeIDs=yield SensorCtrl.GridIDsByMagnitude(query.magnitude);
+     }
+  
      
     if (query.near) {
         query.nearIDs = yield SensorGridCtrl.NearIDs(query.near, query.max_distance);

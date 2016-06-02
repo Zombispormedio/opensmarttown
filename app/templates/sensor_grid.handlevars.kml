@@ -17,12 +17,12 @@
                     <value>{{device_name}}</value>
                 </Data> 
                   <Data name="zone">
-                    <value>{{zone}}</value>
+                    <value>{{{stringify zone}}}</value>
                 </Data> 
                 
                 {{#if sensors}}
                 <Data name="sensors">
-                    <value>{{sensors}}</value>
+                    <value>{{ sensors }}</value>
                 </Data> 
                 {{/if}}
       

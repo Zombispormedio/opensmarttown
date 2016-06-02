@@ -6,7 +6,7 @@ var C = require("../../config/main")
 
 var i18n = require(C.lib + "i18n")
 var mongo = require(C.lib + "mongoutils")
-
+var utils = require(C.lib + "utils")
 
 var SensorRegistryModel = require(C.models + "sensor_registry")
 
@@ -56,12 +56,36 @@ Controller.GetHistory = function (params, cb) {
             }
         }
 
+        if (params.from || params.to) {
+            var dateFrom = new Date(params.from);
+            var dateTo = new Date(params.to);
+           
+            var validFrom = utils.isValidDate(dateFrom);
+            var validTo = utils.isValidDate(dateTo);
+            if (validFrom || validTo) {
+                match.date={};
+                if(validFrom){
+                    match.date.$gte=dateFrom;
+                }
+                
+                if(validTo){
+                    match.date.$lte=dateTo;
+                }
+            }
+        }
 
-        if (Object.keys(match) > 0) {
+ 
+
+
+        if (Object.keys(match).length > 0) {
+               
             pipeline.push({ $match: match });
         }
     }
-     pipeline.push({ $sort: { "date": -1 } });
+
+
+    pipeline.push({ $sort: { "date": -1 } });
+    mongo.paginateAggregation(pipeline, params.page, params.size, false);
     var group = {
         $group: {
             _id: "$node_id",
@@ -70,7 +94,8 @@ Controller.GetHistory = function (params, cb) {
     }
 
     pipeline.push(group);
-   
+
+
     var project = {
         $project: {
             history: {
@@ -81,6 +106,7 @@ Controller.GetHistory = function (params, cb) {
         }
     }
     pipeline.push(project);
+
 
 
     SensorRegistryModel.aggregate(pipeline).exec(cb);

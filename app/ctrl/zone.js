@@ -13,9 +13,14 @@ var SensorGridModel = require(C.models + "sensor_grid")
 const Controller = {};
 
 Controller.getZone = function (params, cb) {
-    var pipeline = [];
-    ZoneModel.match(pipeline, params);
-    ZoneByPipeline(pipeline, params, cb)
+    if (ParamsValidation(params)) {
+        var pipeline = [];
+        ZoneModel.match(pipeline, params);
+        ZoneByPipeline(pipeline, params, cb)
+    } else {
+        cb(void 0, []);
+    }
+
 
 };
 Controller.Get = $(Controller.getZone);
@@ -45,10 +50,10 @@ var ZoneByPipeline = function (pipeline, params, cb) {
         }
     ];
 
-    if(params.sensor_count!=="false"){
+    if (params.sensor_count !== "false") {
         exec_pipeline.push(SensorCount);
     }
-    
+
 
     exec_pipeline.push(Omit);
 
@@ -177,17 +182,17 @@ var SensorCount = function (zones, cb) {
         if (err) return cb(err);
 
         result.forEach(function (item) {
-            var zone=_.find(zones, function(z){
-               return z._id.equals(item._id); 
+            var zone = _.find(zones, function (z) {
+                return z._id.equals(item._id);
             });
-            
-            if(zone){
-                zone.num_sensors=item.num_sensors;
-                zone.num_grids=item.num_grids;
+
+            if (zone) {
+                zone.num_sensors = item.num_sensors;
+                zone.num_grids = item.num_grids;
             }
         });
-        
-        cb(null,zones);
+
+        cb(null, zones);
 
     });
 
@@ -200,6 +205,23 @@ var Omit = function (zones, cb) {
         next(null, item);
     }, cb);
 
+}
+
+var ParamsValidation = function (params) {
+
+    var EmptyArrayIDs = [
+        params.nearIDs
+    ].every(function (item) {
+        var valid = true;
+
+        if (item) {
+            valid = item.length > 0;
+        }
+
+        return valid;
+    });
+
+    return EmptyArrayIDs;
 }
 
 

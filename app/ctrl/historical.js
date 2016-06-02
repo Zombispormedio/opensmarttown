@@ -35,7 +35,11 @@ var History = function (params) {
         var p = {
             sensors: sensors.map(function (a) {
                 return a._id;
-            })
+            }),
+            page:params.h_page,
+            from:params.from,
+            to:params.to,
+            size:(params.h_size||30)*sensors.length
         }
 
         SensorRegistryCtrl.GetHistory(p, function (err, result) {

@@ -99,7 +99,7 @@ module.exports = function (Schema) {
             } else {
                 var set = Immutable.Set();
 
-                if (utils.isNotEmpty(params.nearIDs)) {
+                if (utils.isNotEmptyAndNull(params.nearIDs)) {
                     var near = params.nearIDs;
                     set = set.concat(near);
                 }

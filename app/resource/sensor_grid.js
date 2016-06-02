@@ -38,9 +38,15 @@ module.exports = function (Schema) {
             } else {
                 var set = Immutable.Set();
 
-                if (utils.isNotEmpty(params.nearIDs)) {
+                if (utils.isNotEmptyAndNull(params.nearIDs)) {
                     var near = params.nearIDs;
                     set = set.concat(near);
+                }
+
+
+                if (utils.isNotEmptyAndNull(params.magnitudeIDs)) {
+                    var magnitude = params.magnitudeIDs;
+                    set = set.concat(magnitude);
                 }
 
                 if (set.count() > 0) {

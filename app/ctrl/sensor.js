@@ -19,17 +19,28 @@ const Controller = {};
 
 
 Controller.GetSensor = function (params, cb) {
-    var exec_pipeline = GetSensorByPipeline(params);
-    exec_pipeline.push(Omit);
+   
+    if (ParamsValidation(params)) {
+        var exec_pipeline = GetSensorByPipeline(params);
+        exec_pipeline.push(Omit);
 
-    async.waterfall(exec_pipeline, cb);
+        async.waterfall(exec_pipeline, cb);
+    } else {
+        cb(void 0, []);
+    }
+
+
 
 }
 
 Controller.GetSensorNotOmitID = function (params, cb) {
-    var exec_pipeline = GetSensorByPipeline(params);
+    if (ParamsValidation(params)) {
+        var exec_pipeline = GetSensorByPipeline(params);
 
-    async.waterfall(exec_pipeline, cb);
+        async.waterfall(exec_pipeline, cb);
+    } else {
+        cb(void 0, []);
+    }
 
 }
 
@@ -135,6 +146,39 @@ Controller.MagnitudeIDs = $(function (ref, cb) {
     });
 });
 
+Controller.GridIDsByMagnitude = $(function (ref, cb) {
+    MagnitudeModel.findOne({ ref: Number(ref) }, function (err, result) {
+        if (err) return cb(err);
+        if (!result) return cb(i18n.E.no_magnitude);
+
+        var pipeline = [
+            {
+                $match: {
+                    magnitude: result._id
+                }
+            },
+            {
+                $group: {
+                    "_id": "$magnitude",
+                    "grids": { $addToSet: "$sensor_grid" }
+                }
+            }
+        ];
+
+        SensorModel.aggregate(pipeline).exec(function (err, r) {
+            if (err) return cb(err);
+            if(r[0]){
+               cb(null, r[0].grids); 
+            }else{
+                cb(null, []);
+            }
+            
+        });
+
+
+    });
+});
+
 Controller.SensorIDsByGrid = $(function (ref, cb) {
     SensorGridModel.findOne({ ref: Number(ref) }, function (err, result) {
         if (err) return cb(err);
@@ -178,6 +222,25 @@ var Stats = function (sensors, cb) {
 
 }
 
+
+var ParamsValidation = function (params) {
+
+    var EmptyArrayIDs = [
+        params.magnitudeIDs,
+        params.SensorIDsByGrid,
+        params.nearGridIDs
+    ].every(function (item) {
+        var valid = true;
+
+        if (item) {
+            valid = item.length > 0;
+        }
+
+        return valid;
+    });
+
+    return EmptyArrayIDs;
+}
 
 
 module.exports = Controller;

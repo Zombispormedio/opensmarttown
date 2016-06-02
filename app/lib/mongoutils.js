@@ -1,16 +1,18 @@
 const SIZE = Number(process.env.OPEN_API_PAGINATION);
-const Utils={};
+const Utils = {};
 
 
-Utils.paginateAggregation=function(pipeline, page){
-  if (page) {
-        var p = Number(page)-1;
-        pipeline.push({ $skip: SIZE * p });
+Utils.paginateAggregation = function (pipeline, page, size, by_ref) {
+    size=Number(size)||SIZE;
+    if (page) {
+        var p = Number(page) - 1;
+        pipeline.push({ $skip: size * p });
     }
 
-    pipeline.push({ $limit: SIZE });
+    pipeline.push({ $limit: size });
 
-    pipeline.push({ $sort: {ref:1} });
+    if(by_ref!==false)
+    pipeline.push({ $sort: { ref: 1 } });
 }
 
-module.exports=Utils;
+module.exports = Utils;

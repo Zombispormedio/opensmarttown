@@ -20,7 +20,7 @@ module.exports = function (Schema) {
         DefaultFormat: function (pipeline, params) {
             var pre = {};
 
-           
+
             pre.display_name = 1;
             pre.device_name = 1;
             pre.ref = 1
@@ -30,7 +30,7 @@ module.exports = function (Schema) {
             pre.unit = 1;
             pre.grid = "$sensor_grid";
 
-            if (params.no_last_sync!=="true")
+            if (params.no_last_sync !== "true")
                 pre.last_sync = 1;
 
             var project = { $project: pre };
@@ -44,36 +44,42 @@ module.exports = function (Schema) {
             if (params.ref) {
                 q.ref = Number(params.ref);
             } else {
-                var set = Immutable.Set();
-                 var grid_set=Immutable.Set();
 
-                if (utils.isNotEmpty(params.magnitudeIDs)) {
-                    var magnitude = params.magnitudeIDs;
-                    set = set.concat(magnitude);
-                }
-
-                if (utils.isNotEmpty(params.SensorIDsByGrid)) {
-                    var sensor_bygrid = params.SensorIDsByGrid;
-                    set = set.concat(sensor_bygrid);
-                }
+    
+                    var set = Immutable.Set();
+                    var grid_set = Immutable.Set();
 
 
-                if (set.count() > 0) {
-                    q._id = { $in: set.toArray() };
-                }
-                
-                if(utils.isNotEmpty(params.nearGridIDs)){
-                   var nearGrids=params.nearGridIDs;
-                   grid_set=grid_set.concat(nearGrids);
-                }
+                    if (utils.isNotEmptyAndNull(params.magnitudeIDs)) {
+                        var magnitude = params.magnitudeIDs;
+                        set = set.concat(magnitude);
+                    }
+
+                    if (utils.isNotEmptyAndNull(params.SensorIDsByGrid)) {
+                        var sensor_bygrid = params.SensorIDsByGrid;
+                        set = set.concat(sensor_bygrid);
+                    }
+
+
+
+                    if (utils.isNotEmptyAndNull(params.nearGridIDs)) {
+                        var nearGrids = params.nearGridIDs;
+                        grid_set = grid_set.concat(nearGrids);
+                    }
+
+
+                    if (set.count() > 0) {
+                        q._id = { $in: set.toArray() };
+                    }
+
+
+                    if (grid_set.count() > 0) {
+                        q.sensor_grid = { $in: grid_set.toArray() };
+                    }
+
                
-                
-                 if (grid_set.count() > 0) {
-                    q.sensor_grid = { $in: grid_set.toArray() };
-                }
-
             }
-        
+
 
             pipeline.push({ $match: q });
         }
