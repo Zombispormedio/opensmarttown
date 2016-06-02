@@ -6,7 +6,7 @@ var Response = require(C.lib + "response")
 var middleware = require(C.routes + "middleware")
 var i18n = require(C.lib + "i18n")
 var log = require(C.lib + "logger")
-var CurrentCtrl = require(C.ctrl + "current")
+var HistoricalCtrl = require(C.ctrl + "historical")
 var SensorGridCtrl = require(C.ctrl + "sensor_grid")
 var SensorCtrl = require(C.ctrl + "sensor")
 const PREFIX = "/historical"
@@ -37,7 +37,7 @@ var main = function* () {
         query.nearGridIDs = yield SensorGridCtrl.NearIDs(query.near, query.max_distance);
     }
 
-    var result = yield CurrentCtrl.GetSensorData(query);
+    var result = yield HistoricalCtrl.GetHistorical(query);
     Response.Success(this, result);
 }
 router.get('/', main);

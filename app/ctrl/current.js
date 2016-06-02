@@ -19,6 +19,7 @@ Controller.GetSensorData = $(function (params, cb) {
 
 
 var CurrentDataSensors = function (sensors, cb) {
+    
     async.map(sensors, function (item, next) {
         SensorModel.findOne({ ref: item.ref }).select("node_id").exec(function (err, result) {
             if (err) return next(err);

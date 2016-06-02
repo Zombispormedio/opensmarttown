@@ -19,6 +19,21 @@ const Controller = {};
 
 
 Controller.GetSensor = function (params, cb) {
+    var exec_pipeline = GetSensorByPipeline(params);
+    exec_pipeline.push(Omit);
+
+    async.waterfall(exec_pipeline, cb);
+
+}
+
+Controller.GetSensorNotOmitID = function (params, cb) {
+    var exec_pipeline = GetSensorByPipeline(params);
+
+    async.waterfall(exec_pipeline, cb);
+
+}
+
+var GetSensorByPipeline = function (params) {
     var pipeline = [];
     SensorModel.match(pipeline, params);
     mongo.paginateAggregation(pipeline, params.page);
@@ -35,12 +50,9 @@ Controller.GetSensor = function (params, cb) {
     exec_pipeline.push(Grid(params));
 
     if (params.stats === "true") {
-         exec_pipeline.push(Stats);
+        exec_pipeline.push(Stats);
     }
-
-    exec_pipeline.push(Omit);
-
-    async.waterfall(exec_pipeline, cb);
+    return exec_pipeline;
 
 }
 
@@ -140,27 +152,28 @@ var Omit = function (sensors, cb) {
 
 }
 
-var Stats=function (sensors, cb) {
-
-     var params = {
+var Stats = function (sensors, cb) {
+    if (sensors.length == 0) return cb(null, cb);
+    var params = {
         sensors: sensors.map(function (a) {
             return a._id;
         })
     }
-    
-    SensorRegistryCtrl.GetSensorStats(params, function(err, result){
+
+    SensorRegistryCtrl.GetSensorStats(params, function (err, result) {
+        if (err) return cb(err);
         result.forEach(function (item) {
-            var sensor=_.find(sensors, function(z){
-               return z._id.equals(item._id); 
+            var sensor = _.find(sensors, function (z) {
+                return z._id.equals(item._id);
             });
-            
-            if(sensor){
-                sensor.stats=_.omit(item, ["_id"]);
-             
+
+            if (sensor) {
+                sensor.stats = _.omit(item, ["_id"]);
+
             }
         });
-        
-        cb(null,sensors);
+
+        cb(null, sensors);
     });
 
 }

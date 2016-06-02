@@ -45,6 +45,47 @@ Controller.GetSensorStats = function (params, cb) {
     SensorRegistryModel.aggregate(pipeline).exec(cb);
 }
 
+Controller.GetHistory = function (params, cb) {
+    var pipeline = [];
+
+    if (params) {
+        var match = {};
+        if (params.sensors) {
+            if (params.sensors.length > 0) {
+                match.node_id = { $in: params.sensors };
+            }
+        }
+
+
+        if (Object.keys(match) > 0) {
+            pipeline.push({ $match: match });
+        }
+    }
+     pipeline.push({ $sort: { "date": -1 } });
+    var group = {
+        $group: {
+            _id: "$node_id",
+            history: { $push: "$$ROOT" }
+        }
+    }
+
+    pipeline.push(group);
+   
+    var project = {
+        $project: {
+            history: {
+                value: 1,
+                date: 1
+            }
+
+        }
+    }
+    pipeline.push(project);
+
+
+    SensorRegistryModel.aggregate(pipeline).exec(cb);
+}
+
 
 
 module.exports = Controller;
