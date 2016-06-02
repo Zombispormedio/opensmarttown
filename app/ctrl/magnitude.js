@@ -9,7 +9,7 @@ var mongo = require(C.lib + "mongoutils")
 
 var MagnitudeModel = require(C.models + "magnitude")
 
-var Controller = {};
+const Controller = {};
 
 Controller.Get = $(function (params, cb) {
     var pipeline = [];

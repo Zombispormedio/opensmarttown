@@ -15,7 +15,8 @@ var SensorRegistryCtrl = require(C.ctrl + "sensor_registry")
 var SensorModel = require(C.models + "sensor");
 var MagnitudeModel = require(C.models + "magnitude");
 
-var Controller = {};
+const Controller = {};
+
 
 Controller.GetSensor = function (params, cb) {
     var pipeline = [];

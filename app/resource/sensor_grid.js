@@ -77,6 +77,41 @@ module.exports = function (Schema) {
 
                 cb(null, result.ref);
             });
+        },
+        GetCountsByZone: function (params, cb) {
+            var pipeline = [];
+            if (params) {
+                var match = {};
+                if (params.zones) {
+                    if (params.zones.length > 0) {
+                        match.zone = { $in: params.zones };
+                    }
+                }
+
+                if (Object.keys(match) > 0) {
+                    pipeline.push({ $match: match });
+                }
+            }
+
+            var group = {
+                $group: {
+                    _id: "$zone",
+                    num_sensors: { $sum: { $size: "$sensors" } },
+                    grids: { $push: "$$ROOT" }
+                }
+            };
+            pipeline.push(group);
+
+            var project = {
+                $project: {
+                    num_sensors: 1,
+                    num_grids: { $size: "$grids" }
+                }
+            };
+            pipeline.push(project);
+
+            this.aggregate(pipeline).exec(cb);
+
         }
 
     }

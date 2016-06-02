@@ -11,7 +11,7 @@ var mongo = require(C.lib + "mongoutils")
 var SensorRegistryModel = require(C.models + "sensor_registry")
 
 
-var Controller = {};
+const Controller = {};
 
 
 Controller.GetSensorStats = function (params, cb) {

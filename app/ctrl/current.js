@@ -7,7 +7,7 @@ var i18n = require(C.lib + "i18n")
 var SensorModel = require(C.models + "sensor");
 var SensorCtrl = require(C.ctrl + "sensor")
 
-var Controller = {};
+const Controller = {};
 
 Controller.GetSensorData = $(function (params, cb) {
 

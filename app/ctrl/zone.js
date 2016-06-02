@@ -9,8 +9,8 @@ var i18n = require(C.lib + "i18n")
 var mongo = require(C.lib + "mongoutils")
 var Handlebars = require(C.lib + "handlebars");
 var ZoneModel = require(C.models + "zone")
-var SensorGridCtrl = require(C.ctrl + "sensor_grid")
-var Controller = {};
+var SensorGridModel = require(C.models + "sensor_grid")
+const Controller = {};
 
 Controller.getZone = function (params, cb) {
     var pipeline = [];
@@ -45,7 +45,10 @@ var ZoneByPipeline = function (pipeline, params, cb) {
         }
     ];
 
-    exec_pipeline.push(SensorCount);
+    if(params.sensor_count!=="false"){
+        exec_pipeline.push(SensorCount);
+    }
+    
 
     exec_pipeline.push(Omit);
 
@@ -170,7 +173,7 @@ var SensorCount = function (zones, cb) {
         })
     }
 
-    SensorGridCtrl.GetCountsByZone(params, function (err, result) {
+    SensorGridModel.GetCountsByZone(params, function (err, result) {
         if (err) return cb(err);
 
         result.forEach(function (item) {
@@ -198,5 +201,6 @@ var Omit = function (zones, cb) {
     }, cb);
 
 }
+
 
 module.exports = Controller;

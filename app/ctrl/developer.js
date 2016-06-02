@@ -9,7 +9,7 @@ var i18n = require(C.lib + "i18n")
 var mail = require(C.lib + "mail")
 var DeveloperModel = require(C.models + "developer")
 
-var Controller = {};
+const Controller = {};
 
 Controller.signin = $(function (body, cb) {
     var email = body.email;

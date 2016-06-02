@@ -11,10 +11,11 @@ var Handlebars = require(C.lib + "handlebars");
 var SensorGridModel = require(C.models + "sensor_grid")
 var SensorModel = require(C.models + "sensor")
 
-var ZoneCtrl = require(C.ctrl + "zone")
 var ZoneModel = require(C.models + "zone")
+var ZoneCtrl = require(C.ctrl + "zone")
 
-var Controller = {};
+
+const Controller = {};
 
 
 Controller.GetGrid = function (params, cb) {
@@ -83,13 +84,14 @@ var SensorRefs = function (grids, cb) {
 var ZoneRef = function (params) {
 
     return function (grids, cb) {
-
+        
         async.map(grids, function (item, next) {
 
             if (params.onlyRefs === "false") {
                 var p = {
                     id: item.zone,
-                    no_shape: params.no_shape
+                    no_shape: params.no_shape,
+                    sensor_count:"false"
                 }
                 ZoneCtrl.ByID(p, function (err, zone) {
                     if (err) return next(err);
@@ -185,42 +187,6 @@ Controller.NearIDs = $(function (c_str, max_str, cb) {
         });
 })
 
-Controller.GetCountsByZone = function (params, cb) {
-    var pipeline = [];
-    if (params) {
-        var match = {};
-        if (params.zones) {
-            if (params.zones.length > 0) {
-                match.zone = { $in: params.zones };
-            }
-        }
-
-        if (Object.keys(match) > 0) {
-            pipeline.push({ $match: match });
-        }
-    }
-
-    var group = {
-        $group: {
-            _id: "$zone",
-            num_sensors: { $sum: { $size: "$sensors" } },
-            grids: { $push: "$$ROOT" }
-        }
-    };
-    pipeline.push(group);
-
-    var project = {
-        $project: {
-            num_sensors: 1,
-            num_grids: { $size: "$grids" }
-        }
-    };
-    pipeline.push(project);
-
-
-    SensorGridModel.aggregate(pipeline).exec(cb);
-
-};
 
 
 module.exports = Controller;
