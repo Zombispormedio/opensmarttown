@@ -177,18 +177,23 @@ var SensorCount = function (zones, cb) {
             return a._id;
         })
     }
-
+    
+ 
     SensorGridModel.GetCountsByZone(params, function (err, result) {
         if (err) return cb(err);
-
-        result.forEach(function (item) {
-            var zone = _.find(zones, function (z) {
-                return z._id.equals(item._id);
-            });
-
-            if (zone) {
-                zone.num_sensors = item.num_sensors;
-                zone.num_grids = item.num_grids;
+   
+   
+        zones.forEach(function(zone){
+           var r=_.find(result, function(item) {
+               return zone._id.equals(item._id);
+           }) 
+           
+            if (r) {
+                zone.num_sensors = r.num_sensors;
+                zone.num_grids = r.num_grids;
+            }else{
+                zone.num_sensors = 0;
+                zone.num_grids = 0;
             }
         });
 
