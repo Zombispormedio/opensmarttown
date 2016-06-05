@@ -22,7 +22,11 @@ Controller.GetGrid = function (params, cb) {
 
     if (ParamsValidation(params)) {
         var pipeline = [];
-        SensorGridModel.match(pipeline, params);
+        var match=SensorGridModel.match(params);
+        
+        if(!match)return cb(null, []);
+        
+        pipeline.push(match);
 
         GetSensorGrid(pipeline, params, cb);
     } else {
@@ -49,7 +53,7 @@ Controller.ByID = function (params, cb) {
 
 
 var GetSensorGrid = function (pipeline, params, cb) {
-    mongo.paginateAggregation(pipeline, params.page);
+    mongo.paginateAggregation(pipeline, params.page, params.size);
     SensorGridModel.DefaultFormat(pipeline, params);
 
     var exec_pipeline = [
@@ -197,7 +201,8 @@ var ParamsValidation = function (params) {
 
     var EmptyArrayIDs = [
         params.nearIDs,
-        params.magnitudeIDs
+        params.magnitudeIDs,
+        params.GridIDsByZone
     ].every(function (item) {
         var valid = true;
 
@@ -210,6 +215,35 @@ var ParamsValidation = function (params) {
 
     return EmptyArrayIDs;
 }
+
+Controller.GridIDsByZone = $(function (ref, cb) {
+    ZoneModel.findOne({ ref: ref }).select("_id").exec(function (err, z) {
+        if (err) return cb(err);
+        if (!z)return cb(null, []);
+        var zone_id = z._id;
+
+        SensorGridModel.aggregate([
+            { $match: { zone: zone_id } },
+            {
+                $group: {
+                    _id: "$zone",
+                    grids: { $push: "$_id" }
+                }
+            }
+
+        ]).exec(function (err, result) {
+            if (err) return cb(err);
+
+            if (result.length === 0) return cb(null, []);
+          
+            cb(null, result[0].grids)
+
+        });
+
+
+    });
+
+});
 
 
 

@@ -91,30 +91,37 @@ module.exports = function (Schema) {
             return { $near: coords, $maxDistance: _max }
         },
 
-        match: function (pipeline, params) {
+        match: function (params) {
             var q = {};
 
             if (params.ref) {
                 q.ref = Number(params.ref);
             } else {
                 var set = Immutable.Set();
-
+                var flag_param=false;
+                
                 if (utils.isNotEmptyAndNull(params.nearIDs)) {
                     var near = params.nearIDs;
                     set = set.concat(near);
+                    flag_param=true;
                 }
                 
                 if (utils.isNotEmptyAndNull(params.magnitudeIDs)) {
                     var magnitude = params.magnitudeIDs;
-                    set = set.concat(magnitude);
+                    set = set.intersect(magnitude);
+                    flag_param=true;
                 }
 
                 if (set.count() > 0) {
                     q._id = { $in: set.toArray() };
+                }else{
+                    if(flag_param){
+                        return null;
+                    }
                 }
             }
 
-            pipeline.push({ $match: q });
+            return { $match: q };
         },
         GetRef: function (id, cb) {
             this.findOne({ _id: id }).select("ref").exec(function (err, result) {

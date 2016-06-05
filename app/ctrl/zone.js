@@ -15,7 +15,10 @@ const Controller = {};
 Controller.getZone = function (params, cb) {
     if (ParamsValidation(params)) {
         var pipeline = [];
-        ZoneModel.match(pipeline, params);
+        var match=ZoneModel.match(params);
+        if(!match)return cb(null,[]);
+        pipeline.push(match);
+        
         ZoneByPipeline(pipeline, params, cb)
     } else {
         cb(void 0, []);
@@ -37,7 +40,7 @@ Controller.ByID = function (params, cb) {
 
 
 var ZoneByPipeline = function (pipeline, params, cb) {
-    mongo.paginateAggregation(pipeline, params.page);
+    mongo.paginateAggregation(pipeline, params.page, params.size);
 
     var project = ZoneModel.DefaultFormat(params);
 

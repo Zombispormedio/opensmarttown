@@ -38,50 +38,71 @@ module.exports = function (Schema) {
             pipeline.push(project);
 
         },
-        match: function (pipeline, params) {
+        match: function (params) {
             var q = {};
 
             if (params.ref) {
                 q.ref = Number(params.ref);
             } else {
 
-    
-                    var set = Immutable.Set();
-                    var grid_set = Immutable.Set();
+
+                var set = Immutable.Set();
+                var grid_set = Immutable.Set();
+                var flag_sensor = false;
+                var flag_grid = false;
 
 
-                    if (utils.isNotEmptyAndNull(params.magnitudeIDs)) {
-                        var magnitude = params.magnitudeIDs;
-                        set = set.concat(magnitude);
-                    }
-
-                    if (utils.isNotEmptyAndNull(params.SensorIDsByGrid)) {
-                        var sensor_bygrid = params.SensorIDsByGrid;
-                        set = set.concat(sensor_bygrid);
-                    }
+                if (utils.isNotEmptyAndNull(params.magnitudeIDs)) {
+                    var magnitude = params.magnitudeIDs;
+                    set = set.concat(magnitude);
+                    flag_sensor = true;
+                }
 
 
+                if (utils.isNotEmptyAndNull(params.SensorIDsByGrid)) {
+                    var sensor_bygrid = params.SensorIDsByGrid;
+                    set = set.intersect(sensor_bygrid);
+                    flag_sensor = true;
+                }
 
-                    if (utils.isNotEmptyAndNull(params.nearGridIDs)) {
-                        var nearGrids = params.nearGridIDs;
-                        grid_set = grid_set.concat(nearGrids);
-                    }
+                if (utils.isNotEmptyAndNull(params.SensorIDsByZone)) {
+                    var sensor_byzone = params.SensorIDsByZone;
+                    set = set.intersect(sensor_byzone);
+                    flag_sensor = true;
+                }
 
 
-                    if (set.count() > 0) {
-                        q._id = { $in: set.toArray() };
-                    }
+                if (utils.isNotEmptyAndNull(params.nearGridIDs)) {
+                    var nearGrids = params.nearGridIDs;
+                    grid_set = grid_set.intersect(nearGrids);
+                    flag_grid = true;
+                }
 
 
-                    if (grid_set.count() > 0) {
-                        q.sensor_grid = { $in: grid_set.toArray() };
-                    }
 
-               
+
+
+
+                if (set.count() > 0) {
+                    q._id = { $in: set.toArray() };
+                } else {
+                    if (flag_sensor)
+                        return null;
+                }
+
+
+                if (grid_set.count() > 0) {
+                    q.sensor_grid = { $in: grid_set.toArray() };
+                } else {
+                    if (flag_grid)
+                        return null;
+                }
+
+
             }
 
 
-            pipeline.push({ $match: q });
+            return { $match: q };
         }
 
     }

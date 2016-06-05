@@ -14,6 +14,7 @@ var SensorRegistryCtrl = require(C.ctrl + "sensor_registry")
 
 var SensorModel = require(C.models + "sensor");
 var MagnitudeModel = require(C.models + "magnitude");
+var ZoneModel = require(C.models + "zone")
 
 const Controller = {};
 
@@ -22,6 +23,8 @@ Controller.GetSensor = function (params, cb) {
 
     if (ParamsValidation(params)) {
         var exec_pipeline = GetSensorByPipeline(params);
+        if (!exec_pipeline) return cb(null, []);
+
         exec_pipeline.push(Omit);
 
         async.waterfall(exec_pipeline, cb);
@@ -37,6 +40,8 @@ Controller.GetSensorNotOmitID = function (params, cb) {
     if (ParamsValidation(params)) {
         var exec_pipeline = GetSensorByPipeline(params);
 
+        if (!exec_pipeline) return cb(null, []);
+
         async.waterfall(exec_pipeline, cb);
     } else {
         cb(void 0, []);
@@ -46,8 +51,15 @@ Controller.GetSensorNotOmitID = function (params, cb) {
 
 var GetSensorByPipeline = function (params) {
     var pipeline = [];
-    SensorModel.match(pipeline, params);
-    mongo.paginateAggregation(pipeline, params.page);
+    var match = SensorModel.match(params);
+
+    if (match) {
+        pipeline.push(match);
+    } else {
+        return null;
+    }
+
+    mongo.paginateAggregation(pipeline, params.page, params.size);
     SensorModel.DefaultFormat(pipeline, params);
 
     var exec_pipeline = [
@@ -190,8 +202,8 @@ Controller.ZoneIDsByMagnitude = $(function (ref, cb) {
 
         SensorGridModel.find({ _id: { $in: grids } }).select("zone").exec(function (err, result) {
             if (err) return cb(err);
-            
-            cb(null, result.map(function(item){
+
+            cb(null, result.map(function (item) {
                 return item.zone;
             }));
 
@@ -208,6 +220,38 @@ Controller.SensorIDsByGrid = $(function (ref, cb) {
         cb(null, result.sensors);
     });
 });
+
+
+Controller.SensorIDsByZone = $(function (ref, cb) {
+    ZoneModel.findOne({ ref: ref }).select("_id").exec(function (err, z) {
+        if (err) return cb(err);
+        var zone_id = z._id;
+
+        SensorGridModel.aggregate([
+            { $match: { zone: zone_id } },
+            {
+                $group: {
+                    _id: "$zone",
+                    sensors: { $push: "$sensors" }
+                }
+            }
+
+        ]).exec(function (err, result) {
+            if (err) return cb(err);
+
+            if (result.length === 0) return cb(null, []);
+
+            cb(null, _.flatten(result[0].sensors))
+
+        });
+
+
+    });
+
+});
+
+
+
 
 var Omit = function (sensors, cb) {
 
@@ -250,7 +294,8 @@ var ParamsValidation = function (params) {
     var EmptyArrayIDs = [
         params.magnitudeIDs,
         params.SensorIDsByGrid,
-        params.nearGridIDs
+        params.nearGridIDs,
+        params.SensorIDsByZone
     ].every(function (item) {
         var valid = true;
 

@@ -18,7 +18,7 @@ Controller.Get = $(function (params, cb) {
 
     MagnitudeModel.format(pipeline, params);
 
-    mongo.paginateAggregation(pipeline, params.page);
+    mongo.paginateAggregation(pipeline, params.page, params.size);
 
 
     var q = MagnitudeModel.aggregate(pipeline)

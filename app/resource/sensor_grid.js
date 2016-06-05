@@ -30,7 +30,7 @@ module.exports = function (Schema) {
             pipeline.push(project);
 
         },
-        match: function (pipeline, params) {
+        match: function (params) {
             var q = {};
 
             if (params.ref) {
@@ -38,19 +38,34 @@ module.exports = function (Schema) {
             } else {
                 var set = Immutable.Set();
 
+                var flag_param = false;
+
                 if (utils.isNotEmptyAndNull(params.nearIDs)) {
                     var near = params.nearIDs;
                     set = set.concat(near);
+                    flag_param = true;
                 }
 
 
                 if (utils.isNotEmptyAndNull(params.magnitudeIDs)) {
                     var magnitude = params.magnitudeIDs;
-                    set = set.concat(magnitude);
+                    set = set.intersect(magnitude);
+                    flag_param = true;
                 }
+                
+                if (utils.isNotEmptyAndNull(params.GridIDsByZone)) {
+                    var gridbyzone = params.GridIDsByZone;
+                    set = set.intersect(gridbyzone);
+                    flag_param = true;
+                }
+                
+              
 
                 if (set.count() > 0) {
                     q._id = { $in: set.toArray() };
+                } else {
+                    if (flag_param)
+                        return null;
                 }
 
 
@@ -65,13 +80,9 @@ module.exports = function (Schema) {
                     q["sensors." + less] = { $exists: false };
                 }
 
-
-
-
-
             }
 
-            pipeline.push({ $match: q });
+            return { $match: q };
         },
         near: function (coords, max) {
             var _max = (max || MAX_DISTANCE) / GEO_UNIT;
