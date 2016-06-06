@@ -26,6 +26,7 @@ var main = function* () {
 
     if (query.magnitude) {
         query.magnitudeIDs = yield SensorCtrl.MagnitudeIDs(query.magnitude);
+        
     }
 
     if (query.grid) {
@@ -41,7 +42,7 @@ var main = function* () {
     }
 
     if (query.near) {
-        query.nearGridIDs = yield SensorGridCtrl.NearIDs(query.near, query.max_distance);
+           query.nearGridIDs = yield SensorGridCtrl.NearIDs(query.near, query.max_distance);
     }
 
 

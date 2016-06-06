@@ -32,6 +32,12 @@ var main = function* () {
         query.SensorIDsByGrid = yield SensorCtrl.SensorIDsByGrid(query.grid);
 
     }
+    
+     if (query.zone) {
+
+        query.SensorIDsByZone = yield SensorCtrl.SensorIDsByZone(query.zone);
+      
+    }
 
     if (query.near) {
         query.nearGridIDs = yield SensorGridCtrl.NearIDs(query.near, query.max_distance);

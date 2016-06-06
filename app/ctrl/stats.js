@@ -31,7 +31,7 @@ var Sensors = function (params) {
 
 var StatsSensor = function (params) {
     return function (sensors, cb) {
-        if (sensors.length == 0) return cb(null, cb);
+        if (sensors.length == 0) return cb(null,[]);
         var p = {
             sensors: sensors.map(function (a) {
                 return a._id;

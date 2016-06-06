@@ -74,7 +74,7 @@ module.exports = function (Schema) {
 
                 if (utils.isNotEmptyAndNull(params.nearGridIDs)) {
                     var nearGrids = params.nearGridIDs;
-                    grid_set = grid_set.intersect(nearGrids);
+                    grid_set = grid_set.concat(nearGrids);
                     flag_grid = true;
                 }
 
