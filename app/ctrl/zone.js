@@ -232,6 +232,8 @@ var SensorCount = function (zones, cb) {
 
 }
 
+Controller.SensorCountByZone=SensorCount;
+
 var Omit = function (zones, cb) {
 
     async.map(zones, function (item, next) {
