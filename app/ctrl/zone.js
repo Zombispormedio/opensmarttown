@@ -15,11 +15,16 @@ const Controller = {};
 Controller.getZone = function (params, cb) {
     if (ParamsValidation(params)) {
         var pipeline = [];
-        var match=ZoneModel.match(params);
-        if(!match)return cb(null,[]);
+        var match = ZoneModel.match(params);
+        if (!match) return cb(null, []);
         pipeline.push(match);
-        
-        ZoneByPipeline(pipeline, params, cb)
+
+        var exec_pipeline = ZoneByPipeline(pipeline, params);
+        exec_pipeline.push(Omit);
+
+        exec_pipeline.push(Format(params.format));
+
+        async.waterfall(exec_pipeline, cb);
     } else {
         cb(void 0, []);
     }
@@ -39,7 +44,23 @@ Controller.ByID = function (params, cb) {
 }
 
 
-var ZoneByPipeline = function (pipeline, params, cb) {
+Controller.getZoneNotOmitIDNoFormat = function (params, cb) {
+    if (ParamsValidation(params)) {
+        var pipeline = [];
+        var match = ZoneModel.match(params);
+        if (!match) return cb(null, []);
+        pipeline.push(match);
+
+        var exec_pipeline = ZoneByPipeline(pipeline, params);
+        async.waterfall(exec_pipeline, cb);
+    } else {
+        cb(void 0, []);
+    }
+
+
+};
+
+var ZoneByPipeline = function (pipeline, params) {
     mongo.paginateAggregation(pipeline, params.page, params.size);
 
     var project = ZoneModel.DefaultFormat(params);
@@ -57,15 +78,8 @@ var ZoneByPipeline = function (pipeline, params, cb) {
         exec_pipeline.push(SensorCount);
     }
 
+    return exec_pipeline;
 
-    exec_pipeline.push(Omit);
-
-
-    exec_pipeline.push(Format(params.format));
-
-
-
-    async.waterfall(exec_pipeline, cb);
 
 }
 
@@ -180,21 +194,21 @@ var SensorCount = function (zones, cb) {
             return a._id;
         })
     }
-    
- 
+
+
     SensorGridModel.GetCountsByZone(params, function (err, result) {
         if (err) return cb(err);
-   
-   
-        zones.forEach(function(zone){
-           var r=_.find(result, function(item) {
-               return zone._id.equals(item._id);
-           }) 
-           
+
+
+        zones.forEach(function (zone) {
+            var r = _.find(result, function (item) {
+                return zone._id.equals(item._id);
+            })
+
             if (r) {
                 zone.num_sensors = r.num_sensors;
                 zone.num_grids = r.num_grids;
-            }else{
+            } else {
                 zone.num_sensors = 0;
                 zone.num_grids = 0;
             }

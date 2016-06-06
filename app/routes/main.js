@@ -12,6 +12,7 @@ var sensor = require(C.routes + "sensor")
 var current = require(C.routes + "current")
 var historical = require(C.routes + "historical")
 var stats_sensor = require(C.routes + "stats_sensor")
+var stats_zone = require(C.routes + "stats_zone")
 
 module.exports = function (app) {
 
@@ -44,6 +45,9 @@ module.exports = function (app) {
 
     app.use(stats_sensor.routes())
         .use(stats_sensor.allowedMethods());
+
+    app.use(stats_zone.routes())
+        .use(stats_zone.allowedMethods());
 
     app.use(middleware.NoRoute());
 

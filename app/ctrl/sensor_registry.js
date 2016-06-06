@@ -162,9 +162,6 @@ Controller.GetStats = function (params, cb) {
     pipeline.push({ $sort: { "date": -1 } });
 
     var group = {
-        _id: {
-            node_id: "$node_id",
-        },
 
         avg_value: { $avg: "$value" },
         max_value: { $max: "$value" },
@@ -174,7 +171,7 @@ Controller.GetStats = function (params, cb) {
     }
 
     var groupById = {
-        _id: "$_id.node_id",
+  
         stats: {
             $push: {
                 avg_value: "$avg_value",
@@ -183,6 +180,16 @@ Controller.GetStats = function (params, cb) {
                 count: "$count"
             }
         }
+    }
+    
+    if(!params.no_id){
+        group._id={
+            node_id: "$node_id",
+        }
+        groupById._id="$_id.node_id"
+    }else{
+        group._id={};
+        groupById._id=null;
     }
 
 

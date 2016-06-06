@@ -44,14 +44,16 @@ var History = function (params) {
 
         SensorRegistryCtrl.GetHistory(p, function (err, result) {
             if (err) return cb(err);
-            result.forEach(function (item) {
-                var sensor = _.find(sensors, function (z) {
+            sensors.forEach(function (item) {
+                var r = _.find(result, function (z) {
                     return z._id.equals(item._id);
                 });
 
-                if (sensor) {
-                    sensor.history = _.omit(item, ["_id"]).history;
+                if (r) {
+                    item.history = _.omit(r, ["_id"]).history;
 
+                }else{
+                    item.history=[];
                 }
             });
 
