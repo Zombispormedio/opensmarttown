@@ -16,11 +16,11 @@ Controller.getZone = function (params, cb) {
     if (ParamsValidation(params)) {
         var pipeline = [];
         var match = ZoneModel.match(params);
-     
-        if (!match){
-          
-           return Format(params.format)([],cb);
-        } 
+
+        if (!match) {
+
+            return Format(params.format)([], cb);
+        }
         pipeline.push(match);
 
         var exec_pipeline = ZoneByPipeline(pipeline, params);
@@ -30,7 +30,7 @@ Controller.getZone = function (params, cb) {
 
         async.waterfall(exec_pipeline, cb);
     } else {
-       Format(params.format)([],cb);
+        Format(params.format)([], cb);
     }
 
 
@@ -44,7 +44,9 @@ Controller.ByID = function (params, cb) {
 
     params = _.omit(params, ["id"]);
 
-    ZoneByPipeline(pipeline, params, cb)
+    var exec_pipeline = ZoneByPipeline(pipeline, params)
+     exec_pipeline.push(Omit);
+    async.waterfall(exec_pipeline, cb);
 }
 
 
@@ -89,7 +91,6 @@ var ZoneByPipeline = function (pipeline, params) {
 
 var Format = function (format) {
     return function (zones, cb) {
-       
         var result = zones;
         switch (format) {
             case "geojson": result = GeoJSON(zones);

@@ -19,7 +19,7 @@ Controller.GetZoneStats = $(function (params, cb) {
         Stats(params),
 
         Omit,
-        ZoneCtrl.FormatZone(params)
+        ZoneCtrl.FormatZone(params.format)
 
     ], cb);
 });
@@ -37,7 +37,7 @@ var Zones = function (params) {
 var Stats = function (params) {
 
     return function (zones, cb) {
-
+        if(zones.length===0)return cb(null, []);
         async.waterfall([
             function Magnitude(next) {
                 var p = {}
@@ -187,7 +187,7 @@ var Stats = function (params) {
 
 
 var Omit = function (zones, cb) {
-
+   
     async.map(zones, function (item, next) {
         item = _.omit(item, ["_id"]);
         next(null, item);

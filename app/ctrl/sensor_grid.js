@@ -100,7 +100,7 @@ var ZoneRef = function (params) {
 
         async.map(grids, function (item, next) {
 
-            if (params.onlyRefs === "false") {
+           if (params.onlyRefs === "false") {
                 var p = {
                     id: item.zone,
                     no_shape: params.no_shape,

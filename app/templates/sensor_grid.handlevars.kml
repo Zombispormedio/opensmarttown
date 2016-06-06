@@ -17,7 +17,12 @@
                     <value>{{device_name}}</value>
                 </Data> 
                   <Data name="zone">
+                    {{#if (isObject zone)}}
                     <value>{{{stringify zone}}}</value>
+                    {{else}}
+                     <value>{{{zone}}}</value>
+                    {{/if}}
+                    
                 </Data> 
                 
                 {{#if sensors}}
