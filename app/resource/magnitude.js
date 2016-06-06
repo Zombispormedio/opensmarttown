@@ -49,7 +49,7 @@ module.exports = function (Schema) {
                 var unit=void 0;
                 result=result.toObject();
                 
-                var magnitude = options.onlyRefs==="false"?result.display_name:result.ref;
+                var magnitude = options.onlyRefs==="false"?{display_name:result.display_name, ref:result.ref}:result.ref;
 
                 if(result.type === "0"){
                     

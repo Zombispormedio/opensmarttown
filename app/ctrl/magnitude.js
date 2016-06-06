@@ -1,5 +1,5 @@
 var Boom = require("boom");
-var async=require("async");
+var async = require("async");
 var _ = require("lodash");
 var $ = require('thunkify');
 var C = require("../../config/main")
@@ -7,7 +7,9 @@ var C = require("../../config/main")
 var i18n = require(C.lib + "i18n")
 var mongo = require(C.lib + "mongoutils")
 
-var MagnitudeModel = require(C.models + "magnitude")
+var SensorGridModel = require(C.models + "sensor_grid");
+var SensorModel = require(C.models + "sensor");
+var MagnitudeModel = require(C.models + "magnitude");
 
 const Controller = {};
 
@@ -24,15 +26,19 @@ var GetMagnitude = function (params, cb) {
 
     var q = MagnitudeModel.aggregate(pipeline)
 
-    q.exec(function (err, result) {
-        if (err) return cb(err);
+    async.waterfall([
+        function (next) {
+            q.exec(next);
+        },
+        function (result, next) {
+            var magnitudes = formatConversion(result);
+            next(null, magnitudes);
+        },
+        SensorsCount,
 
-        var magnitudes = formatConversion(result);
+        Omit
+    ], cb);
 
-
-        Omit(magnitudes, cb);
-
-    });
 
 }
 
@@ -57,7 +63,7 @@ Controller.GetWithID = function (params, cb) {
         var magnitudes = formatConversion(result);
 
 
-      cb(null, magnitudes);
+        cb(null, magnitudes);
 
     });
 
@@ -109,6 +115,47 @@ var Omit = function (magnitudes, cb) {
         next(null, item);
     }, cb);
 
+}
+
+var SensorsCount = function (magnitudes, cb) {
+    async.map(magnitudes, function (item, next) {
+
+        var magnitude_id = item._id;
+
+        SensorModel.aggregate([
+            { $match: { magnitude: magnitude_id } },
+            {
+                $group: {
+                    "_id": "$magnitude",
+                    sensors: { $push: "$_id" }
+                }
+            }
+        ]).exec(function (err, s_result) {
+            if (err) return next(err);
+            if (s_result.length === 0) {
+                item.num_sensors = 0;
+                item.num_grids = 0;
+                return next(null, item);
+            }
+
+            var result = s_result[0];
+            item.num_sensors = result.sensors.length;
+
+            SensorGridModel.count({ sensors: { $in: result.sensors } }).exec(function (err, g_count) {
+                if (err) return next(err);
+
+                item.num_grids = g_count;
+                next(null, item);
+
+            });
+
+
+
+        });
+
+
+
+    }, cb);
 }
 
 
