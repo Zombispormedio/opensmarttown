@@ -33,6 +33,59 @@
                     <value>{{num_sensors}}</value>
                 </Data> 
                 
+                {{#if stats}}
+                
+                <Data name="stats_magnitude_ref">
+                    <value>{{stats.magnitude.ref}}</value>
+                </Data> 
+                <Data name="stats_magnitude_name">
+                    <value>{{stats.magnitude.display_name}}</value>
+                </Data> 
+                
+                {{#each stats.data}}
+                
+                {{#if year}}
+                <Data name="stats_data_{{@index}}_year">
+                    <value>{{year}}</value>
+                </Data> 
+                {{/if}}
+                  {{#if month}}
+                  <Data name="stats_data_{{@index}}_month">
+                    <value>{{month}}</value>
+                </Data> 
+                {{/if}}
+                  {{#if day}}
+                  <Data name="stats_data_{{@index}}_day">
+                    <value>{{day}}</value>
+                </Data> 
+                {{/if}}
+                  {{#if hour}}
+                  <Data name="stats_data_{{@index}}_hour">
+                    <value>{{hour}}</value>
+                </Data> 
+                {{/if}}
+                
+                  <Data name="stats_data_{{@index}}_avg_value">
+                    <value>{{avg_value}}</value>
+                </Data> 
+                <Data name="stats_data_{{@index}}_max_value">
+                    <value>{{max_value}}</value>
+                </Data> 
+                <Data name="stats_data_{{@index}}_min_value">
+                    <value>{{min_value}}</value>
+                </Data> 
+                <Data name="stats_data_{{@index}}_count">
+                    <value>{{count}}</value>
+                </Data> 
+                
+                
+                
+                {{/each}}
+                
+                
+                
+                {{/if}}
+                
             </ExtendedData>
 
 
