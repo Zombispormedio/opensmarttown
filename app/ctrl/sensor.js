@@ -6,7 +6,7 @@ var C = require("../../config/main")
 
 var i18n = require(C.lib + "i18n")
 var mongo = require(C.lib + "mongoutils")
-
+var Handlebars = require(C.lib + "handlebars");
 
 var SensorGridModel = require(C.models + "sensor_grid")
 var SensorGridCtrl = require(C.ctrl + "sensor_grid")
@@ -33,6 +33,22 @@ Controller.GetSensor = function (params, cb) {
     }
 
 
+
+}
+
+Controller.GetSensorWithFormat = function (params, cb) {
+
+    if (ParamsValidation(params)) {
+        var exec_pipeline = GetSensorByPipeline(params);
+        if (!exec_pipeline) return cb(null, []);
+
+        exec_pipeline.push(Omit);
+        exec_pipeline.push(Format(params.format));
+
+        async.waterfall(exec_pipeline, cb);
+    } else {
+        cb(void 0, []);
+    }
 
 }
 
@@ -80,7 +96,7 @@ var GetSensorByPipeline = function (params) {
 }
 
 
-Controller.Get = $(Controller.GetSensor);
+Controller.Get = $(Controller.GetSensorWithFormat);
 
 
 
@@ -308,6 +324,89 @@ var ParamsValidation = function (params) {
 
     return EmptyArrayIDs;
 }
+
+
+var Format = function (format) {
+    return function (sensors, cb) {
+        var result = sensors;
+        switch (format) {
+            case "geojson": result = GeoJSON(sensors);
+                cb(null, result);
+                break;
+            case "kml": result = KML(sensors, cb);
+                break;
+
+            default:
+                cb(null, result);
+        }
+    }
+}
+
+Controller.FormatSensor = Format;
+
+var GeoJSON = function (sensors) {
+
+    var result = sensors.map(function (item) {
+        var j = {};
+        j.type = "Feature";
+        var p = {};
+        if (_.isObject(item.grid)) {
+            j.geometry = {
+                type: "Point",
+                coordinates: item.grid.location
+            }
+            
+            p.grid={
+                ref:item.grid.ref,
+                display_name:item.grid.display_name,
+                zone:{
+                    ref:item.grid.zone.ref,
+                    display_name:item.grid.zone.display_name,
+                }         
+            }
+        }else{
+           p.grid =item.grid; 
+        }
+
+        p.ref = item.ref;
+        p.display_name = item.display_name
+        p.device_name = item.device_name
+        p.description = item.description
+        p.magnitude = item.magnitude;
+        p.unit = item.unit;
+        p.last_sync = item.last_sync;
+        
+        if(item.current){
+            p.current=item.current;
+        }
+        
+         if(item.history){
+            p.history=item.history;
+        }
+        
+         if(item.stats){
+            p.stats=item.stats;
+        }
+        
+
+        j.properties = p;
+
+        return j;
+    });
+
+
+
+    return result;
+}
+
+const KML_TEMPLATE = C.templates + "sensors.handlevars.kml"
+
+var KML = function (sensors, cb) {
+    console.log(sensors);
+    Handlebars(KML_TEMPLATE, sensors, cb);
+
+}
+
 
 
 module.exports = Controller;

@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+
+    <Document>
+
+        <name>Sensors.kml</name>
+
+        {{#each this}}
+
+        <Placemark id="{{ref}}">
+            <name>{{display_name}}</name>
+              <description>{{description}}</description>
+
+            <ExtendedData>
+             
+                <Data name="device_name">
+                    <value>{{device_name}}</value>
+                </Data>
+                
+                {{#if (isObject grid)}}
+                 <Data name="grid_ref">
+                    <value>{{{grid.ref}}}</value>
+                </Data> 
+                <Data name="grid_name">
+                    <value>{{grid.display_name}}</value>
+                </Data> 
+                 <Data name="zone_ref">
+                    <value>{{grid.zone.ref}}</value>
+                </Data> 
+                <Data name="zone_name">
+                    <value>{{grid.zone.display_name}}</value>
+                </Data> 
+                {{else}}
+                <Data name="grid">
+                    <value>{{grid}}</value>
+                </Data> 
+                {{/if}} 
+                
+                <Data name="magnitude_ref">
+                    <value>{{magnitude.ref}}</value>
+                </Data> 
+                
+                <Data name="magnitude_name">
+                    <value>{{magnitude.display_name}}</value>
+                </Data> 
+                
+                <Data name="unit_name">
+                    <value>{{unit.display_name}}</value>
+                </Data> 
+                
+                <Data name="unit_symbol">
+                    <value>{{unit.symbol}}</value>
+                </Data> 
+                
+                 <Data name="last_sync">
+                    <value>{{last_sync}}</value>
+                </Data> 
+                
+               {{#if current}}
+                 <Data name="current_value">
+                    <value>{{current.value}}</value>
+                </Data> 
+                
+                 <Data name="current_timestamp">
+                    <value>{{current.timestamp}}</value>
+                </Data> 
+                
+                {{/if}}
+                
+                   {{#if history}}
+                 {{#each history}}
+                 <Data name="history_{{@index}}_value">
+                    <value>{{value}}</value>
+                </Data> 
+                 <Data name="history_{{@index}}_date">
+                    <value>{{date}}</value>
+                </Data> 
+                 
+                 {{/each}}
+                 {{/if}}
+                 
+                 
+                  {{#if stats}}
+                  {{#each stats}}
+                
+                {{#if year}}
+                <Data name="stats_{{@index}}_year">
+                    <value>{{year}}</value>
+                </Data> 
+                {{/if}}
+                  {{#if month}}
+                  <Data name="stats_{{@index}}_month">
+                    <value>{{month}}</value>
+                </Data> 
+                {{/if}}
+                  {{#if day}}
+                  <Data name="stats_{{@index}}_day">
+                    <value>{{day}}</value>
+                </Data> 
+                {{/if}}
+                  {{#if hour}}
+                  <Data name="stats_{{@index}}_hour">
+                    <value>{{hour}}</value>
+                </Data> 
+                {{/if}}
+                
+                  <Data name="stats_{{@index}}_avg_value">
+                    <value>{{avg_value}}</value>
+                </Data> 
+                <Data name="stats_{{@index}}_max_value">
+                    <value>{{max_value}}</value>
+                </Data> 
+                <Data name="stats_{{@index}}_min_value">
+                    <value>{{min_value}}</value>
+                </Data> 
+                <Data name="stats_{{@index}}_count">
+                    <value>{{count}}</value>
+                </Data> 
+                
+                
+                
+                {{/each}}
+                {{/if}}
+                
+      
+            </ExtendedData>
+
+              {{#if (isObject grid)}}
+            <Point>
+                <coordinates>{{grid.location}}</coordinates>
+            </Point>
+            {{/if}}
+       
+
+        </Placemark>
+
+
+        {{/each}}
+
+    </Document>
+
+</kml>

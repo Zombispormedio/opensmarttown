@@ -26,7 +26,7 @@ var main = function* () {
 
     if (query.magnitude) {
         query.magnitudeIDs = yield SensorCtrl.MagnitudeIDs(query.magnitude);
-        
+
     }
 
     if (query.grid) {
@@ -34,20 +34,32 @@ var main = function* () {
         query.SensorIDsByGrid = yield SensorCtrl.SensorIDsByGrid(query.grid);
 
     }
-    
+
     if (query.zone) {
 
         query.SensorIDsByZone = yield SensorCtrl.SensorIDsByZone(query.zone);
-      
+
     }
 
     if (query.near) {
-           query.nearGridIDs = yield SensorGridCtrl.NearIDs(query.near, query.max_distance);
+        query.nearGridIDs = yield SensorGridCtrl.NearIDs(query.near, query.max_distance);
     }
 
+    var format = query.format;
 
     var result = yield SensorCtrl.Get(query);
-    Response.Success(this, result);
+    
+    switch (format) {
+        case "kml":
+            Response.SuccessXML(this, result);
+            break;
+        case "geojson":
+            Response.SuccessGeoJSON(this, result);
+            break;
+        default:
+            Response.Success(this, result);
+
+    }
 
 
 }

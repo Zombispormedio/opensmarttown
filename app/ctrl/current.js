@@ -13,7 +13,8 @@ Controller.GetSensorData = $(function (params, cb) {
 
     async.waterfall([
         Format(params),
-        CurrentDataSensors
+        CurrentDataSensors,
+        SensorCtrl.FormatSensor(params.format)
     ], cb);
 });
 

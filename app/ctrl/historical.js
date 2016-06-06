@@ -15,7 +15,8 @@ Controller.GetHistorical = $(function (params, cb) {
     async.waterfall([
         Sensors(params),
         History(params),
-        Omit
+        Omit,
+        SensorCtrl.FormatSensor(params.format)
 
     ], cb);
 });

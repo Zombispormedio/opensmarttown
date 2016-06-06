@@ -32,11 +32,11 @@ var main = function* () {
         query.SensorIDsByGrid = yield SensorCtrl.SensorIDsByGrid(query.grid);
 
     }
-    
-     if (query.zone) {
+
+    if (query.zone) {
 
         query.SensorIDsByZone = yield SensorCtrl.SensorIDsByZone(query.zone);
-      
+
     }
 
     if (query.near) {
@@ -44,7 +44,18 @@ var main = function* () {
     }
 
     var result = yield CurrentCtrl.GetSensorData(query);
-    Response.Success(this, result);
+    var format = query.format;
+    switch (format) {
+        case "kml":
+            Response.SuccessXML(this, result);
+            break;
+        case "geojson":
+            Response.SuccessGeoJSON(this, result);
+            break;
+        default:
+            Response.Success(this, result);
+
+    }
 }
 router.get('/', main);
 router.get('/:sensor', main);

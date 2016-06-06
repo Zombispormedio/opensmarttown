@@ -15,7 +15,8 @@ Controller.GetStatsSensor = $(function (params, cb) {
     async.waterfall([
         Sensors(params),
         StatsSensor(params),
-        Omit
+        Omit,
+        SensorCtrl.FormatSensor(params.format)
 
     ], cb);
 });

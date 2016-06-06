@@ -137,9 +137,6 @@ var Format = function (format) {
             default:
                 cb(null, result);
         }
-
-
-
     }
 }
 

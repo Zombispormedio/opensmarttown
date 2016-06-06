@@ -3,7 +3,7 @@
 
     <Document>
 
-        <name>SensorGrid.kml</name>
+        <name>Grids.kml</name>
 
         {{#each this}}
 
