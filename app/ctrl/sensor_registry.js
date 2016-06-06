@@ -153,7 +153,7 @@ Controller.GetStats = function (params, cb) {
 
     }
 
-    
+
     if (Object.keys(match).length > 0) {
 
         pipeline.push({ $match: match });
@@ -171,7 +171,7 @@ Controller.GetStats = function (params, cb) {
     }
 
     var groupById = {
-  
+
         stats: {
             $push: {
                 avg_value: "$avg_value",
@@ -181,15 +181,15 @@ Controller.GetStats = function (params, cb) {
             }
         }
     }
-    
-    if(!params.no_id){
-        group._id={
+
+    if (!params.no_id) {
+        group._id = {
             node_id: "$node_id",
         }
-        groupById._id="$_id.node_id"
-    }else{
-        group._id={};
-        groupById._id=null;
+        groupById._id = "$_id.node_id"
+    } else {
+        group._id = {};
+        groupById._id = null;
     }
 
 
@@ -207,7 +207,12 @@ Controller.GetStats = function (params, cb) {
                 group._id.month = { $month: "$date" };
                 groupById.stats.$push.month = "$_id.month";
                 break;
-
+            case "originOfTime":
+                if (params.no_id) {
+                    group._id = null;
+                }
+                groupById.stats.$push.time = { $literal: "Origin Of Time" };
+                break;
             case "year":
             default:
                 group._id.year = { $year: "$date" };
