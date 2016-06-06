@@ -158,5 +158,7 @@ var SensorsCount = function (magnitudes, cb) {
     }, cb);
 }
 
+Controller.SensorsCountByMagnitude=SensorsCount;
+
 
 module.exports = Controller;

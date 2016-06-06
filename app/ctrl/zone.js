@@ -211,7 +211,7 @@ var SensorCount = function (zones, cb) {
     SensorGridModel.GetCountsByZone(params, function (err, result) {
         if (err) return cb(err);
 
-
+     
         zones.forEach(function (zone) {
             var r = _.find(result, function (item) {
                 return zone._id.equals(item._id);
@@ -224,7 +224,9 @@ var SensorCount = function (zones, cb) {
                 zone.num_sensors = 0;
                 zone.num_grids = 0;
             }
+         
         });
+    
 
         cb(null, zones);
 
