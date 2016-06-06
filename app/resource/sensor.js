@@ -61,13 +61,26 @@ module.exports = function (Schema) {
 
                 if (utils.isNotEmptyAndNull(params.SensorIDsByGrid)) {
                     var sensor_bygrid = params.SensorIDsByGrid;
-                    set = set.intersect(sensor_bygrid);
+
+
+                    if (set.count() > 0) {
+                        set = set.intersect(sensor_bygrid);
+                    } else {
+                        set = set.concat(sensor_bygrid);
+                    }
+
                     flag_sensor = true;
                 }
 
                 if (utils.isNotEmptyAndNull(params.SensorIDsByZone)) {
                     var sensor_byzone = params.SensorIDsByZone;
-                    set = set.intersect(sensor_byzone);
+
+
+                    if (set.count() > 0) {
+                        set = set.intersect(sensor_byzone);
+                    } else {
+                        set = set.concat(sensor_byzone);
+                    }
                     flag_sensor = true;
                 }
 

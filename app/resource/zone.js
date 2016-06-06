@@ -108,9 +108,15 @@ module.exports = function (Schema) {
                 
                 if (utils.isNotEmptyAndNull(params.magnitudeIDs)) {
                     var magnitude = params.magnitudeIDs;
-                    set = set.intersect(magnitude);
+                    if(set.count()>0){
+                          set = set.intersect(magnitude);
+                    }else{
+                          set = set.concat(magnitude);
+                    }
+                   
                     flag_param=true;
                 }
+               
 
                 if (set.count() > 0) {
                     q._id = { $in: set.toArray() };

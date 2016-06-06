@@ -18,7 +18,8 @@ Controller.GetZoneStats = $(function (params, cb) {
         Zones(params),
         Stats(params),
 
-        Omit
+        Omit,
+        ZoneCtrl.FormatZone(params)
 
     ], cb);
 });

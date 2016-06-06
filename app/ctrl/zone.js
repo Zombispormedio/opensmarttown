@@ -99,6 +99,8 @@ var Format = function (format) {
     }
 }
 
+Controller.FormatZone=Format;
+
 
 
 
@@ -144,6 +146,10 @@ var GeoJSON = function (zones) {
         p.description = item.description
         p.num_grids = item.num_grids;
         p.num_sensors = item.num_sensors;
+        
+        if(item.stats){
+            p.stats=item.stats;
+        }
 
 
         p.lookAt = { type: "Point", coordinates: item.lookAt }

@@ -49,17 +49,28 @@ module.exports = function (Schema) {
 
                 if (utils.isNotEmptyAndNull(params.magnitudeIDs)) {
                     var magnitude = params.magnitudeIDs;
-                    set = set.intersect(magnitude);
+
+                    if (set.count() > 0) {
+                        set = set.intersect(magnitude);
+                    } else {
+                        set = set.concat(magnitude);
+                    }
+
                     flag_param = true;
                 }
-                
+
                 if (utils.isNotEmptyAndNull(params.GridIDsByZone)) {
                     var gridbyzone = params.GridIDsByZone;
-                    set = set.intersect(gridbyzone);
+
+                    if (set.count() > 0) {
+                        set = set.intersect(gridbyzone);
+                    } else {
+                        set = set.concat(gridbyzone);
+                    }
                     flag_param = true;
                 }
-                
-              
+
+
 
                 if (set.count() > 0) {
                     q._id = { $in: set.toArray() };
