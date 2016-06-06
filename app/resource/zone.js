@@ -103,6 +103,7 @@ module.exports = function (Schema) {
                 if (utils.isNotEmptyAndNull(params.nearIDs)) {
                     var near = params.nearIDs;
                     set = set.concat(near);
+                  
                     flag_param=true;
                 }
                 

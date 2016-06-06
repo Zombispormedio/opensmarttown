@@ -23,16 +23,16 @@ router.use(middleware.Developer());
 var main = function* () {
     var query = _.cloneDeep(this.query);
     var format = query.format;
-    
+
     query.ref = this.params.id;
-   
+
     if (query.near) {
         query.nearIDs = yield ZoneCtrl.NearIDs(query.near, query.max_distance);
     }
-    
-      if(query.magnitude){
-         query.magnitudeIDs=yield SensorCtrl.ZoneIDsByMagnitude(query.magnitude);
-     }
+
+    if (query.magnitude) {
+        query.magnitudeIDs = yield SensorCtrl.ZoneIDsByMagnitude(query.magnitude);
+    }
 
     var result = yield ZoneCtrl.Get(query);
 
@@ -42,7 +42,7 @@ var main = function* () {
 
             break;
         case "geojson":
-         
+
             Response.SuccessGeoJSON(this, result);
             break;
         default:

@@ -24,13 +24,16 @@ Controller.GetGrid = function (params, cb) {
         var pipeline = [];
         var match=SensorGridModel.match(params);
         
-        if(!match)return cb(null, []);
+       if (!match){
+          
+           return Format(params.format)([],cb);
+        } 
         
         pipeline.push(match);
 
         GetSensorGrid(pipeline, params, cb);
     } else {
-        cb(null, []);
+        Format(params.format)([],cb);
     }
 
 
