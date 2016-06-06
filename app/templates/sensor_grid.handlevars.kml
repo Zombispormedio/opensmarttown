@@ -16,15 +16,22 @@
                 <Data name="device_name">
                     <value>{{device_name}}</value>
                 </Data> 
-                  <Data name="zone">
-                    {{#if (isObject zone)}}
-                    <value>{{{stringify zone}}}</value>
-                    {{else}}
-                     <value>{{{zone}}}</value>
-                    {{/if}}
-                    
-                </Data> 
                 
+                {{#if (isObject zone)}}
+                 <Data name="zone_ref">
+                    <value>{{{zone.ref}}}</value>
+                </Data> 
+                <Data name="zone_name">
+                    <value>{{zone.display_name}}</value>
+                </Data> 
+                 <Data name="zone_position">
+                    <value>{{zone.lookAt}}</value>
+                </Data> 
+                {{else}}
+                <Data name="zone">
+                    <value>{{zone}}</value>
+                </Data> 
+                {{/if}} 
                 {{#if sensors}}
                 <Data name="sensors">
                     <value>{{ sensors }}</value>
