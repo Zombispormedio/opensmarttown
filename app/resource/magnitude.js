@@ -9,7 +9,7 @@ module.exports = function (Schema) {
         format: function (pipeline) {
             var project = {
                 $project: {
-                    _id: 0, ref: 1, display_name: 1,
+                   ref: 1, display_name: 1,
                     type: {
                         $cond: {
                             if: { $eq: ["$type", "0"] }, then: i18n.C.ANALOG, else: i18n.C.DIGITAL
