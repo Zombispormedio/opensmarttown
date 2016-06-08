@@ -15,6 +15,7 @@ var stats_sensor = require(C.routes + "stats_sensor")
 var stats_zone = require(C.routes + "stats_zone")
 var stats_magnitude = require(C.routes + "stats_magnitude")
 var general_stats = require(C.routes + "general_stats")
+var tree = require(C.routes + "tree")
 
 module.exports = function (app) {
 
@@ -56,6 +57,9 @@ module.exports = function (app) {
 
     app.use(general_stats.routes())
         .use(general_stats.allowedMethods());
+
+    app.use(tree.routes())
+        .use(tree.allowedMethods());
 
     app.use(middleware.NoRoute());
 
