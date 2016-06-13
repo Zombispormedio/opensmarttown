@@ -3,5 +3,5 @@ node_js:
         - 4
 
 before_script:
-  - npm install && npm install -dev && npm install -g mocha
+  -npm install -g mocha && npm install
 script: mocha
