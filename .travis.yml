@@ -1,7 +1,7 @@
 language: node_js
 node_js:
         - 4
-services:
-  - mongodb
+
 before_script:
-  - npm install && npm install -g mocha
+  - npm install && npm install -dev && npm install -g mocha
+script: mocha
