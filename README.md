@@ -1,5 +1,5 @@
 #open-data
-
+[![Build Status](https://travis-ci.org/Zombispormedio/opensmarttown.svg?branch=master)](https://travis-ci.org/Zombispormedio/opensmarttown)
 catalog
 -magnitudes
 -zones
