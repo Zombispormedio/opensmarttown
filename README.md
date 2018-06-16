@@ -1,5 +1,5 @@
 #open-data
-[![Build Status](https://travis-ci.org/Zombispormedio/opensmarttown.svg?branch=master)](https://travis-ci.org/Zombispormedio/opensmarttown)
+[![Build Status](https://travis-ci.org/Zombispormedio/opensmarttown.svg?branch=master)](https://travis-ci.org/Zombispormedio/opensmarttown) [![Greenkeeper badge](https://badges.greenkeeper.io/Zombispormedio/opensmarttown.svg)](https://greenkeeper.io/)
 catalog
 -magnitudes
 -zones
